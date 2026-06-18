@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>睡眠评估小程序首页</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sleep: {
+              blue: "#4f7df7",
+              cyan: "#23d4c7",
+              sky: "#dff4ff",
+              ink: "#171923",
+              muted: "#6b7280",
+              panel: "rgba(255,255,255,0.76)"
+            }
+          },
+          boxShadow: {
+            phone: "0 26px 70px rgba(34, 73, 120, 0.18)",
+            glass: "0 18px 42px rgba(48, 92, 143, 0.13)",
+            soft: "0 10px 24px rgba(62, 103, 156, 0.10)"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    .phone-bg {
+      background:
+        radial-gradient(circle at 20% 6%, rgba(255, 255, 255, 0.95) 0 14%, transparent 30%),
+        radial-gradient(circle at 88% 16%, rgba(108, 193, 255, 0.45) 0 8%, transparent 26%),
+        linear-gradient(160deg, #d8f2ff 0%, #eef9ff 36%, #f5fbff 66%, #eef3f8 100%);
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(18px);
+    }
+
+    .ring {
+      background:
+        radial-gradient(circle, #ffffff 0 53%, transparent 54%),
+        conic-gradient(#23d4c7 0deg 112deg, #4f7df7 112deg 304deg, rgba(220, 232, 245, 0.9) 304deg 360deg);
+    }
+
+    .score-ring {
+      background:
+        radial-gradient(circle, #ffffff 0 57%, transparent 58%),
+        conic-gradient(#4f7df7 0deg 306deg, rgba(221, 232, 245, 0.92) 306deg 360deg);
+    }
+
+    .soft-scroll::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#e8eef5] text-sleep-ink antialiased">
+  <main class="min-h-screen w-full overflow-hidden px-4 py-6 sm:px-8">
+    <div class="mx-auto flex min-h-[calc(100vh-48px)] items-center justify-center">
+      <section class="relative h-[844px] w-[390px] overflow-hidden rounded-[44px] border-[10px] border-white/80 bg-white shadow-phone">
+        <div class="phone-bg soft-scroll h-full overflow-y-auto px-5 pb-28 pt-3">
+          <header class="sticky top-0 z-20 -mx-5 bg-gradient-to-b from-[#dff4ff] via-[#e9f8ff]/95 to-[#e9f8ff]/70 px-5 pb-3 pt-1 backdrop-blur">
+            <div class="mb-5 flex h-5 items-center justify-between text-[13px] font-semibold">
+              <span>9:41</span>
+              <div class="flex items-center gap-1">
+                <span class="h-3 w-4 rounded-[3px] bg-sleep-ink"></span>
+                <span class="h-3 w-4 rounded-[3px] border-2 border-sleep-ink">
+                  <span class="block h-full w-2 rounded-[1px] bg-sleep-ink"></span>
+                </span>
+              </div>
+            </div>
+
+            <div class="flex items-start justify-between">
+              <div>
+                <h1 class="text-[22px] font-bold leading-tight tracking-normal">Hi，欢迎回来！</h1>
+                <div class="mt-1 flex items-center gap-1.5 text-xs font-medium text-sleep-muted">
+                  <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                  <span>设备正常工作中</span>
+                </div>
+              </div>
+              <div class="flex h-8 items-center gap-2 rounded-full bg-white/[0.85] px-3 shadow-soft">
+                <span class="flex gap-0.5">
+                  <i class="h-1 w-1 rounded-full bg-sleep-ink"></i>
+                  <i class="h-1 w-1 rounded-full bg-sleep-ink"></i>
+                  <i class="h-1 w-1 rounded-full bg-sleep-ink"></i>
+                </span>
+                <span class="h-5 w-px bg-slate-200"></span>
+                <span class="h-4 w-4 rounded-full border-2 border-sleep-ink"></span>
+              </div>
+            </div>
+          </header>
+
+          <section class="glass relative mt-2 overflow-hidden rounded-[26px] p-5 shadow-glass">
+            <div class="pointer-events-none absolute -right-5 -top-7 h-28 w-28 rounded-full bg-sky-300/35 blur-2xl"></div>
+            <div class="flex items-center gap-2">
+              <span class="grid h-8 w-8 place-items-center rounded-full bg-white text-sleep-blue shadow-soft">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3a6 6 0 0 0 8.5 7.7A9 9 0 1 1 12 3Z" />
+                </svg>
+              </span>
+              <h2 class="text-base font-bold tracking-normal">睡眠时长</h2>
+            </div>
+
+            <div class="mt-5 flex justify-center">
+              <div class="ring relative grid h-44 w-44 place-items-center rounded-full shadow-[inset_0_0_20px_rgba(79,125,247,0.16)]">
+                <div class="grid h-[118px] w-[118px] place-items-center rounded-full bg-white shadow-[0_12px_30px_rgba(77,109,154,0.14)]">
+                  <div class="text-center">
+                    <p class="text-[36px] font-bold leading-none tracking-normal">8<span class="text-lg">h</span>35<span class="text-lg">m</span></p>
+                    <span class="mt-2 inline-flex rounded-full bg-cyan-100 px-2.5 py-1 text-xs font-bold text-teal-500">本周最佳</span>
+                  </div>
+                </div>
+                <span class="absolute left-5 top-9 rotate-[-28deg] text-[10px] font-semibold text-slate-400">23:20</span>
+                <span class="absolute bottom-8 left-4 rotate-[-64deg] text-[10px] font-semibold text-slate-400">07:55</span>
+              </div>
+            </div>
+
+            <div class="mt-5 flex items-center justify-center gap-8 text-sm font-medium text-sleep-muted">
+              <button class="text-xl leading-none">‹</button>
+              <span>今日</span>
+              <button class="text-xl leading-none">›</button>
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <button class="flex h-12 items-center justify-center gap-2 rounded-2xl bg-sleep-blue text-sm font-bold text-white shadow-soft">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z" />
+                </svg>
+                AI健康评分
+              </button>
+              <button class="flex h-12 items-center justify-center gap-2 rounded-2xl bg-white/[0.85] text-sm font-bold text-sleep-ink shadow-soft">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M13 4v16" />
+                  <path d="M4 17l7-7 4 4 5-7" />
+                </svg>
+                AI运动建议
+              </button>
+            </div>
+          </section>
+
+          <section class="glass mt-4 rounded-[24px] p-5 shadow-glass">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-sleep-ink" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 3v18h18" />
+                  <path d="M7 15v4" />
+                  <path d="M12 9v10" />
+                  <path d="M17 12v7" />
+                </svg>
+                <h2 class="text-base font-bold tracking-normal">睡眠数据</h2>
+              </div>
+              <div class="flex items-center gap-3 text-[11px] font-medium text-sleep-muted">
+                <span class="flex items-center gap-1"><i class="h-2 w-2 rounded-full bg-sleep-blue"></i>深睡</span>
+                <span class="flex items-center gap-1"><i class="h-2 w-2 rounded-full bg-sleep-cyan"></i>浅睡</span>
+              </div>
+            </div>
+
+            <div class="mt-7 flex h-24 items-end justify-between px-1">
+              <div class="flex w-16 flex-col items-center gap-2">
+                <span class="h-2 w-full rounded-full bg-sleep-blue"></span>
+                <span class="text-[10px] text-sleep-muted">23:20</span>
+              </div>
+              <div class="flex w-16 flex-col items-center gap-2">
+                <span class="h-16 w-3 rounded-full bg-sleep-cyan"></span>
+                <span class="h-3 w-full rounded-full bg-sleep-blue"></span>
+                <span class="text-[10px] text-sleep-muted">01:00</span>
+              </div>
+              <div class="flex w-16 flex-col items-center gap-2">
+                <span class="h-16 w-5 rounded-md bg-sleep-cyan"></span>
+                <span class="h-3 w-full rounded-full bg-sleep-blue"></span>
+                <span class="text-[10px] text-sleep-muted">03:00</span>
+              </div>
+              <div class="flex w-16 flex-col items-center gap-2">
+                <span class="h-2 w-full rounded-full bg-sleep-blue"></span>
+                <span class="text-[10px] text-sleep-muted">07:55</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="mt-4 grid grid-cols-2 gap-3">
+            <article class="glass rounded-[22px] p-4 shadow-soft">
+              <div class="flex items-center justify-between">
+                <span class="grid h-9 w-9 place-items-center rounded-full bg-white text-sleep-blue shadow-soft">
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 3a6 6 0 0 0 8.5 7.7A9 9 0 1 1 12 3Z" />
+                  </svg>
+                </span>
+                <span class="grid h-8 w-8 place-items-center rounded-full bg-white text-sleep-muted shadow-soft">›</span>
+              </div>
+              <p class="mt-4 text-sm font-semibold text-sleep-ink">睡眠质量</p>
+              <p class="mt-1 text-2xl font-bold tracking-normal">85<span class="ml-1 text-sm font-medium text-sleep-muted">分</span></p>
+            </article>
+
+            <article class="glass rounded-[22px] p-4 shadow-soft">
+              <div class="flex items-center justify-between">
+                <span class="grid h-9 w-9 place-items-center rounded-full bg-white text-sleep-blue shadow-soft">
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7v5l3 2" />
+                  </svg>
+                </span>
+                <span class="grid h-8 w-8 place-items-center rounded-full bg-white text-sleep-muted shadow-soft">›</span>
+              </div>
+              <p class="mt-4 text-sm font-semibold text-sleep-ink">体动时段</p>
+              <p class="mt-1 text-2xl font-bold tracking-normal">12<span class="ml-1 text-sm font-medium text-sleep-muted">次</span></p>
+            </article>
+
+            <article class="glass col-span-2 flex items-center justify-between rounded-[20px] p-4 shadow-soft">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 place-items-center rounded-full bg-white text-sleep-blue shadow-soft">
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4.5 12.5a7.5 7.5 0 0 0 15 0" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    <path d="M8 19v2" />
+                    <path d="M16 19v2" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="text-sm font-semibold text-sleep-ink">呼吸频率</p>
+                  <p class="mt-1 text-xl font-bold tracking-normal">16<span class="ml-1 text-sm font-medium text-sleep-muted">次/分</span></p>
+                </div>
+              </div>
+              <span class="grid h-8 w-8 place-items-center rounded-full bg-white text-sleep-muted shadow-soft">›</span>
+            </article>
+          </section>
+
+          <section class="mt-4 overflow-hidden rounded-[24px] bg-gradient-to-r from-sleep-blue to-[#2fc7f3] p-4 text-white shadow-glass">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="grid h-11 w-11 place-items-center rounded-full bg-white text-sleep-blue">
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.5 3.48 17 5 19 5a1 1 0 0 1 1 1Z" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="text-sm font-bold">呼吸暂停综合症检测</p>
+                  <p class="mt-1 text-xs text-white/75">科学评估与风险预警</p>
+                </div>
+              </div>
+              <button class="grid h-8 w-8 place-items-center rounded-full bg-white/90 text-sleep-blue">›</button>
+            </div>
+          </section>
+
+          <p class="mt-5 text-center text-xs font-medium text-sleep-muted">已经到底啦！</p>
+        </div>
+
+        <nav class="absolute bottom-4 left-5 right-5 z-30 grid h-[72px] grid-cols-4 rounded-[24px] border border-white/80 bg-white/[0.86] px-2 py-2 shadow-glass backdrop-blur">
+          <button class="flex flex-col items-center justify-center gap-1 text-sleep-blue">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m3 10 9-7 9 7" />
+              <path d="M5 10v10h14V10" />
+            </svg>
+            <span class="text-xs font-bold">首页</span>
+          </button>
+          <button class="flex flex-col items-center justify-center gap-1 text-sleep-muted">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 6h13" />
+              <path d="M8 12h13" />
+              <path d="M8 18h13" />
+              <path d="M3 6h.01" />
+              <path d="M3 12h.01" />
+              <path d="M3 18h.01" />
+            </svg>
+            <span class="text-xs font-semibold">报告</span>
+          </button>
+          <button class="flex flex-col items-center justify-center gap-1 text-sleep-muted">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z" />
+            </svg>
+            <span class="text-xs font-semibold">健康</span>
+          </button>
+          <button class="flex flex-col items-center justify-center gap-1 text-sleep-muted">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21a8 8 0 0 0-16 0" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span class="text-xs font-semibold">我的</span>
+          </button>
+        </nav>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

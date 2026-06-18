@@ -1,0 +1,2854 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>炼狱 Lineup 查询工具 - 手机端高保真</title>
+    <style>
+      :root {
+        --valorant: #ff4655;
+        --valorant-dark: #b5353a;
+        --valorant-soft: #fff0f1;
+        --bg: #f3f5f8;
+        --card: #ffffff;
+        --ink: #1c1f23;
+        --muted: #7d8590;
+        --line: #e2e6eb;
+        --soft: #f1f2f4;
+        --deep: #0d1a23;
+        --deep-card: #14212b;
+        --blue-soft: #e7f4ff;
+        --blue: #1976d2;
+        --green-soft: #e7f7ee;
+        --green: #149653;
+        --orange-soft: #fff0e4;
+        --orange: #df6d13;
+        --purple-soft: #efebff;
+        --purple: #5f53b5;
+        --shadow: 0 8px 22px rgba(18, 20, 23, 0.06);
+        --z-toast: 12;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        color: var(--ink);
+        background: #e9ebef;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+        letter-spacing: 0;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        color: inherit;
+        font: inherit;
+      }
+
+      button {
+        border: 0;
+        padding: 0;
+        background: none;
+        cursor: pointer;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      .device {
+        width: 390px;
+        height: 844px;
+        overflow: hidden;
+        border: 1px solid #d8dce1;
+        border-radius: 32px;
+        background: var(--bg);
+        box-shadow: 0 28px 80px rgba(13, 26, 35, 0.22);
+      }
+
+      .app {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        height: 100%;
+        background: var(--bg);
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 42px;
+        padding: 12px 22px 0;
+        background: rgba(255, 255, 255, 0.92);
+        font-size: 14px;
+        font-weight: 850;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .status-icons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .signal {
+        display: grid;
+        grid-template-columns: repeat(4, 3px);
+        align-items: end;
+        gap: 2px;
+        height: 12px;
+      }
+
+      .signal i {
+        width: 3px;
+        border-radius: 3px;
+        background: #090b0d;
+      }
+
+      .signal i:nth-child(1) { height: 4px; }
+      .signal i:nth-child(2) { height: 7px; }
+      .signal i:nth-child(3) { height: 10px; }
+      .signal i:nth-child(4) { height: 12px; }
+
+      .battery {
+        width: 23px;
+        height: 12px;
+        border: 1.5px solid #090b0d;
+        border-radius: 4px;
+        padding: 2px;
+      }
+
+      .battery i {
+        display: block;
+        width: 72%;
+        height: 100%;
+        border-radius: 2px;
+        background: #090b0d;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) 42px;
+        align-items: center;
+        min-height: 58px;
+        padding: 8px 16px 10px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .screen-home .topbar {
+        display: none;
+      }
+
+      .icon-btn {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .topbar .icon-btn {
+        border-color: transparent;
+        background: transparent;
+      }
+
+      .icon {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .top-title {
+        min-width: 0;
+        text-align: center;
+      }
+
+      .top-title strong {
+        display: block;
+        overflow: hidden;
+        font-size: 17px;
+        line-height: 1.22;
+        font-weight: 900;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .top-title span {
+        display: block;
+        margin-top: 3px;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.25;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .content {
+        min-height: 0;
+        overflow-y: auto;
+        padding: 18px 16px 18px;
+        scrollbar-width: none;
+      }
+
+      .content::-webkit-scrollbar {
+        display: none;
+      }
+
+      .screen {
+        display: none;
+      }
+
+      .screen.is-active {
+        display: block;
+      }
+
+      .screen-home .content {
+        padding-top: 14px;
+      }
+
+      .home-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 0 0 14px;
+      }
+
+      .home-head > div {
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .home-head h1 {
+        margin: 0;
+        color: #0b1623;
+        font-size: 26px;
+        line-height: 32px;
+        font-weight: 800;
+        letter-spacing: -0.4px;
+        text-wrap: balance;
+      }
+
+      .home-head p {
+        margin: 4px 0 0;
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 18px;
+        text-wrap: pretty;
+      }
+
+      .home-head .icon-btn {
+        flex: 0 0 auto;
+        width: 36px;
+        height: 36px;
+        border: 1px solid #e5e7eb;
+        border-radius: 999px;
+        color: #0b1623;
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+      }
+
+      .home-head .icon {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2;
+      }
+
+      .page-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+        text-wrap: pretty;
+      }
+
+      .page-head {
+        margin-bottom: 20px;
+      }
+
+      .page-head h1 {
+        margin: 0 0 12px;
+        font-size: 28px;
+        line-height: 1.18;
+        font-weight: 900;
+        text-wrap: balance;
+      }
+
+      .tap {
+        transition: opacity 160ms ease-out, transform 160ms ease-out, filter 160ms ease-out;
+      }
+
+      .tap:hover {
+        filter: brightness(0.99);
+      }
+
+      .tap:active,
+      .tap.is-pressed {
+        transform: translateY(1px) scale(0.99);
+      }
+
+      .tap:focus-visible,
+      .icon-btn:focus-visible,
+      input:focus-visible {
+        outline: 3px solid rgba(255, 70, 85, 0.28);
+        outline-offset: 2px;
+      }
+
+      .hero-card {
+        position: relative;
+        min-height: 196px;
+        overflow: hidden;
+        padding: 22px 18px 20px;
+        border-radius: 12px;
+        color: #fff;
+        border: 1px solid rgba(255, 70, 85, 0.26);
+        background: #071522;
+        box-shadow: 0 12px 24px rgba(7, 21, 34, 0.16);
+      }
+
+      .hero-card::before,
+      .hero-card::after {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+      }
+
+      .hero-card::before {
+        right: -66px;
+        top: -54px;
+        width: 224px;
+        height: 224px;
+        border: 18px solid rgba(255, 70, 85, 0.22);
+        border-radius: 999px;
+        background: transparent;
+        clip-path: none;
+      }
+
+      .hero-card::after {
+        inset: 8px;
+        border: 1px solid rgba(255, 70, 85, 0.30);
+        box-shadow:
+          inset 72px 0 0 rgba(255, 70, 85, 0.018),
+          inset -46px 0 0 rgba(255, 70, 85, 0.08),
+          inset 0 -1px 0 rgba(255, 70, 85, 0.24),
+          inset 0 1px 0 rgba(255, 70, 85, 0.16);
+      }
+
+      .hero-card h2 {
+        position: relative;
+        z-index: 2;
+        max-width: 194px;
+        margin: 0 0 10px;
+        font-size: 34px;
+        line-height: 0.96;
+        font-weight: 900;
+        text-wrap: balance;
+      }
+
+      .hero-card h2 > span {
+        color: var(--valorant);
+      }
+
+      .hero-card h2 > b {
+        margin-left: 4px;
+        color: #fff;
+        font-style: italic;
+        font-weight: 900;
+      }
+
+      .hero-card em {
+        display: block;
+        margin-top: 10px;
+        color: #fff;
+        font-size: 25px;
+        line-height: 1.02;
+        font-style: normal;
+      }
+
+      .hero-card p {
+        position: relative;
+        z-index: 2;
+        max-width: 184px;
+        margin: 0;
+        padding-left: 10px;
+        border-left: 4px solid var(--valorant);
+        color: rgba(255, 255, 255, 0.84);
+        font-size: 12px;
+        line-height: 1.45;
+        text-wrap: pretty;
+      }
+
+      .hero-kicker {
+        position: relative;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        margin-bottom: 10px;
+        padding: 0;
+        border: 0;
+        color: var(--valorant);
+        background: transparent;
+        font-size: 10px;
+        font-weight: 900;
+      }
+
+      .hero-kicker::before {
+        content: "";
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+        background: var(--valorant);
+        clip-path: polygon(0 0, 38% 0, 50% 38%, 62% 0, 100% 0, 50% 78%);
+      }
+
+      .hero-visual {
+        position: absolute;
+        z-index: 1;
+        right: 0;
+        bottom: 0;
+        width: 146px;
+        height: 196px;
+        overflow: hidden;
+        border-radius: 0;
+        background: #171824;
+        box-shadow: none;
+        clip-path: polygon(24% 0, 100% 0, 100% 100%, 0 100%);
+        pointer-events: none;
+      }
+
+      .hero-visual::before {
+        content: "";
+        position: absolute;
+        z-index: 3;
+        right: -64px;
+        top: -18px;
+        width: 184px;
+        height: 184px;
+        border: 1px solid rgba(255, 70, 85, 0.26);
+        border-radius: 999px;
+        box-shadow:
+          0 0 0 12px rgba(255, 70, 85, 0.05),
+          0 0 0 26px rgba(255, 70, 85, 0.035);
+      }
+
+      .hero-visual::after {
+        content: "";
+        position: absolute;
+        z-index: 4;
+        inset: 0;
+        background: rgba(7, 21, 34, 0.22);
+        box-shadow:
+          inset 26px 0 0 rgba(255, 70, 85, 0.08),
+          inset 1px 0 0 rgba(255, 70, 85, 0.34);
+      }
+
+      .brimstone-hero {
+        position: absolute;
+        z-index: 2;
+        right: -18px;
+        bottom: -28px;
+        width: 164px;
+        height: 256px;
+        object-fit: cover;
+        object-position: 52% 16%;
+        filter: saturate(1.12) contrast(1.12) brightness(0.82) drop-shadow(0 18px 16px rgba(0, 0, 0, 0.34));
+      }
+
+      .agent-phone {
+        position: absolute;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 17px;
+        background: #0d1a23;
+        box-shadow: 0 18px 28px rgba(13, 26, 35, 0.28);
+      }
+
+      .agent-phone.small {
+        left: 0;
+        top: 34px;
+        width: 88px;
+        height: 132px;
+        transform: rotate(-5deg);
+      }
+
+      .agent-phone.large {
+        right: 0;
+        top: 0;
+        width: 94px;
+        height: 168px;
+      }
+
+      .agent-phone::before {
+        content: "9:41";
+        position: absolute;
+        left: 10px;
+        top: 8px;
+        color: #fff;
+        font-size: 8px;
+        font-weight: 850;
+      }
+
+      .agent-phone::after {
+        content: "";
+        position: absolute;
+        right: 10px;
+        top: 11px;
+        width: 18px;
+        height: 5px;
+        background: #fff;
+        clip-path: polygon(0 100%, 12% 45%, 24% 100%, 36% 20%, 48% 100%, 60% 0, 72% 100%, 100% 100%);
+        opacity: 0.9;
+      }
+
+      .agent-title {
+        position: absolute;
+        left: 10px;
+        top: 42px;
+        color: #fff;
+        font-size: 22px;
+        line-height: 0.92;
+        font-weight: 900;
+      }
+
+      .agent-title span {
+        display: block;
+        color: var(--valorant);
+      }
+
+      .agent-card {
+        position: absolute;
+        left: 9px;
+        right: 9px;
+        bottom: 10px;
+        min-height: 42px;
+        padding: 8px;
+        background: var(--valorant);
+        color: #fff;
+      }
+
+      .agent-card strong {
+        display: block;
+        font-size: 14px;
+        line-height: 1;
+        font-weight: 900;
+      }
+
+      .agent-card span {
+        display: block;
+        margin-top: 4px;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 8px;
+        font-weight: 750;
+      }
+
+      .molly {
+        position: absolute;
+        right: 20px;
+        top: 54px;
+        width: 42px;
+        height: 68px;
+        border-radius: 10px 10px 8px 8px;
+        border: 3px solid #25282d;
+        background: var(--valorant);
+        box-shadow:
+          inset -7px 0 0 rgba(126, 0, 8, 0.18),
+          0 10px 14px rgba(0, 0, 0, 0.22);
+        transform: rotate(14deg);
+      }
+
+      .molly::before {
+        content: "";
+        position: absolute;
+        left: 7px;
+        top: -15px;
+        width: 25px;
+        height: 18px;
+        border: 6px solid #22262b;
+        border-bottom: 0;
+        border-radius: 9px 9px 0 0;
+      }
+
+      .molly::after {
+        content: "";
+        position: absolute;
+        left: 14px;
+        top: 25px;
+        width: 13px;
+        height: 19px;
+        border-radius: 9px 9px 12px 12px;
+        background: #fff;
+        clip-path: polygon(50% 0, 70% 30%, 62% 45%, 88% 70%, 50% 100%, 12% 70%, 38% 45%, 30% 30%);
+      }
+
+      .spark {
+        position: absolute;
+        z-index: 2;
+        width: 10px;
+        height: 10px;
+        border: 1px solid currentColor;
+        color: rgba(255, 70, 85, 0.62);
+        font-size: 0;
+      }
+
+      .spark.one { right: 144px; top: 24px; }
+      .spark.two { right: 22px; bottom: 30px; color: rgba(255, 255, 255, 0.34); }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        margin: 20px 0 26px;
+        padding: 22px 10px 20px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+
+      .stat {
+        display: grid;
+        justify-items: center;
+        gap: 9px;
+        min-width: 0;
+        padding: 0 8px;
+        text-align: center;
+      }
+
+      .stat + .stat {
+        border-left: 1px solid var(--line);
+      }
+
+      .stat-icon {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 999px;
+        color: var(--icon-color);
+        background: var(--icon-bg);
+      }
+
+      .stat-label {
+        color: #5d6570;
+        font-size: 14px;
+        line-height: 1.2;
+        font-weight: 650;
+      }
+
+      .stat-value {
+        font-size: 27px;
+        line-height: 1;
+        font-weight: 900;
+        color: var(--value-color);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0 0 12px;
+      }
+
+      .section-title h2 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.2;
+        font-weight: 900;
+      }
+
+      .link-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 650;
+      }
+
+      .featured-map-card {
+        position: relative;
+        display: grid;
+        width: 100%;
+        margin-top: 16px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--card);
+        text-align: left;
+        box-shadow: 0 8px 22px rgba(13, 26, 35, 0.08);
+      }
+
+      .featured-map-cover {
+        position: relative;
+        min-height: 150px;
+        overflow: hidden;
+        background: var(--deep);
+        color: #fff;
+      }
+
+      .featured-map-cover::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background:
+          linear-gradient(36deg, rgba(7, 21, 34, 0.88) 0%, rgba(7, 21, 34, 0.62) 56%, rgba(7, 21, 34, 0.3) 100%);
+        pointer-events: none;
+      }
+
+      .featured-map-cover::after {
+        content: "";
+        position: absolute;
+        right: -48px;
+        bottom: -68px;
+        z-index: 2;
+        width: 178px;
+        height: 178px;
+        border: 22px solid rgba(255, 70, 85, 0.22);
+        border-radius: 999px;
+        pointer-events: none;
+      }
+
+      .featured-map-cover img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        object-position: center;
+        opacity: 0.92;
+      }
+
+      .cover-brand,
+      .cover-pill,
+      .cover-title,
+      .cover-meta {
+        position: absolute;
+        z-index: 3;
+      }
+
+      .cover-brand {
+        left: 18px;
+        top: 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #fff;
+        font-size: 14px;
+        line-height: 1;
+        font-weight: 800;
+      }
+
+      .cover-brand::before {
+        content: "";
+        width: 16px;
+        height: 16px;
+        background: var(--valorant);
+        clip-path: polygon(0 0, 38% 0, 50% 38%, 62% 0, 100% 0, 50% 78%);
+      }
+
+      .cover-pill {
+        right: 16px;
+        top: 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 24px;
+        padding: 0 10px 0 8px;
+        border: 0;
+        border-radius: 999px;
+        color: #fff;
+        background: var(--valorant);
+        font-size: 11px;
+        line-height: 1;
+        font-weight: 700;
+      }
+
+      .cover-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #fff;
+      }
+
+      .cover-title {
+        left: 18px;
+        bottom: 34px;
+        min-height: 41px;
+        font-size: 34px;
+        line-height: 1.1;
+        font-weight: 800;
+        text-wrap: balance;
+      }
+
+      .cover-meta {
+        left: 18px;
+        bottom: 16px;
+        min-height: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 12px;
+        line-height: 1.15;
+        font-weight: 700;
+      }
+
+      .featured-map-body {
+        position: relative;
+        display: block;
+        min-height: 150px;
+        padding: 18px;
+        background: #fff;
+      }
+
+      .featured-map-body > span:first-child {
+        display: block;
+        padding-right: 52px;
+      }
+
+      .featured-map-body strong {
+        display: block;
+        min-height: 29px;
+        margin-bottom: 12px;
+        color: #071522;
+        font-size: 21px;
+        line-height: 1.32;
+        font-weight: 700;
+      }
+
+      .featured-map-body p {
+        margin: 12px 0 0;
+        max-width: 230px;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .featured-map-body .badge-row {
+        gap: 8px;
+      }
+
+      .featured-map-body .badge {
+        min-height: 24px;
+        padding: 0 10px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .featured-map-body .badge.blue {
+        color: #2563eb;
+        background: #eaf1ff;
+      }
+
+      .featured-map-body .badge.purple {
+        color: #7c3aed;
+        background: #f1eaff;
+      }
+
+      .featured-map-body .badge.orange {
+        color: #ea580c;
+        background: #fff1e8;
+      }
+
+      .featured-map-action {
+        position: absolute;
+        right: 16px;
+        bottom: 18px;
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        color: #fff;
+        background: #071522;
+      }
+
+      .featured-map-action .icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .home-map-section {
+        margin-top: 16px;
+      }
+
+      .home-map-section .section-title {
+        margin-bottom: 10px;
+      }
+
+      .home-map-section .section-title h2 {
+        font-size: 18px;
+      }
+
+      .home-map-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .cover-map-card {
+        position: relative;
+        min-height: 106px;
+        overflow: hidden;
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        background: #071522;
+        text-align: left;
+        box-shadow: 0 8px 22px rgba(13, 26, 35, 0.08);
+      }
+
+      .cover-map-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: rgba(7, 21, 34, 0.44);
+      }
+
+      .cover-map-card::after {
+        content: "";
+        position: absolute;
+        right: -34px;
+        bottom: -46px;
+        z-index: 2;
+        width: 96px;
+        height: 96px;
+        border: 12px solid rgba(255, 70, 85, 0.22);
+        border-radius: 999px;
+      }
+
+      .cover-map-card img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.94;
+      }
+
+      .cover-map-card span {
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        z-index: 3;
+      }
+
+      .cover-map-card strong {
+        display: block;
+        margin-bottom: 4px;
+        overflow: hidden;
+        font-size: 18px;
+        line-height: 1.15;
+        font-weight: 900;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-wrap: balance;
+      }
+
+      .cover-map-card em {
+        display: block;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 10px;
+        line-height: 1;
+        font-style: normal;
+        font-weight: 750;
+        text-transform: uppercase;
+      }
+
+      .map-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .map-card,
+      .info-card,
+      .filter-card,
+      .result-card,
+      .detail-card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+
+      .map-card {
+        display: grid;
+        grid-template-columns: 82px 1fr auto;
+        gap: 14px;
+        align-items: center;
+        width: 100%;
+        min-height: 116px;
+        padding: 16px 14px;
+        text-align: left;
+      }
+
+      .map-thumb,
+      .image-placeholder {
+        border-radius: 8px;
+        background: #edf0f3;
+      }
+
+      .map-thumb {
+        width: 74px;
+        height: 74px;
+        object-fit: cover;
+      }
+
+      .map-card strong,
+      .result-card strong {
+        display: block;
+        margin-bottom: 10px;
+        overflow: hidden;
+        font-size: 21px;
+        line-height: 1.25;
+        font-weight: 900;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .map-card p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 27px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1;
+        font-weight: 750;
+        white-space: nowrap;
+      }
+
+      .badge.blue { color: var(--blue); background: var(--blue-soft); }
+      .badge.green { color: var(--green); background: var(--green-soft); }
+      .badge.orange { color: var(--orange); background: var(--orange-soft); }
+      .badge.purple { color: var(--purple); background: var(--purple-soft); }
+
+      .search {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        align-items: center;
+        min-height: 48px;
+        margin: 20px 0;
+        padding: 0 16px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--card);
+        color: var(--muted);
+      }
+
+      .search input {
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--ink);
+        font-size: 15px;
+      }
+
+      .search input::placeholder {
+        color: var(--muted);
+      }
+
+      .info-card {
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        gap: 12px;
+        align-items: center;
+        min-height: 78px;
+        padding: 14px;
+        margin-top: 18px;
+      }
+
+      .info-icon {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        color: #fff;
+        background: #c8ccd2;
+      }
+
+      .info-card strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 17px;
+        font-weight: 850;
+      }
+
+      .info-card span {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .selected-map {
+        display: inline-grid;
+        grid-template-columns: 34px auto;
+        align-items: center;
+        gap: 10px;
+        min-height: 48px;
+        margin-bottom: 28px;
+        padding: 8px 14px 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--card);
+        font-size: 17px;
+        font-weight: 800;
+      }
+
+      .selected-map img {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        object-fit: cover;
+      }
+
+      .device.screen-filter .topbar {
+        min-height: 64px;
+      }
+
+      .device.screen-filter .top-title strong {
+        color: #0b1623;
+        font-size: 16px;
+        line-height: 1.2;
+        font-weight: 700;
+      }
+
+      .device.screen-filter .top-title span {
+        color: #6b7280;
+        font-size: 11px;
+        line-height: 1.2;
+      }
+
+      .device.screen-filter .content {
+        background: #f5f6f8;
+      }
+
+      .device.screen-filter .bottom-action {
+        display: none;
+      }
+
+      .filter-map-card {
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        width: 100%;
+        min-height: 72px;
+        margin-bottom: 24px;
+        padding: 12px;
+        border: 1px solid #eef0f3;
+        border-radius: 14px;
+        background: #fff;
+        text-align: left;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+      }
+
+      .filter-map-card img {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+
+      .filter-map-card span {
+        min-width: 0;
+      }
+
+      .filter-map-card small {
+        display: block;
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .filter-map-card strong {
+        display: block;
+        margin-top: 4px;
+        color: #0b1623;
+        font-size: 18px;
+        line-height: 1.15;
+        font-weight: 700;
+      }
+
+      .filter-map-card em {
+        display: inline-block;
+        margin-left: 6px;
+        color: #8a94a6;
+        font-size: 12px;
+        line-height: 1;
+        font-style: normal;
+        font-weight: 600;
+      }
+
+      .change-map {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--valorant);
+        font-size: 14px;
+        line-height: 1;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .change-map .icon,
+      .selector-row > .icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .filter-page-head {
+        margin-bottom: 18px;
+      }
+
+      .filter-page-head h1 {
+        margin: 0;
+        color: #0b1623;
+        font-size: 28px;
+        line-height: 1.15;
+        font-weight: 800;
+        text-wrap: balance;
+      }
+
+      .filter-page-head p {
+        margin: 6px 0 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 20px;
+        text-wrap: pretty;
+      }
+
+      .filter-card {
+        padding: 16px;
+        border-color: #eef0f3;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+      }
+
+      .filter-card h2 {
+        margin: 0 0 8px;
+        color: #0b1623;
+        font-size: 16px;
+        line-height: 1.2;
+        font-weight: 700;
+      }
+
+      .filter-row {
+        display: none;
+      }
+
+      .selector-row {
+        display: grid;
+        grid-template-columns: 36px minmax(0, 1fr) auto 16px;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+        min-height: 56px;
+        text-align: left;
+      }
+
+      .selector-row + .selector-row {
+        border-top: 1px solid #eef0f3;
+      }
+
+      .selector-icon {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        color: var(--valorant);
+        background: #fff1f3;
+      }
+
+      .selector-icon .icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .selector-label {
+        color: #111827;
+        font-size: 15px;
+        line-height: 1.2;
+        font-weight: 600;
+      }
+
+      .selector-value {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 14px;
+        border: 1px solid rgba(255, 70, 85, 0.24);
+        border-radius: 999px;
+        color: var(--valorant);
+        background: #fff1f3;
+        font-size: 13px;
+        line-height: 1;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .options {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .option {
+        min-width: 76px;
+        min-height: 36px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--soft);
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 750;
+      }
+
+      .option:hover {
+        border-color: #cfd4da;
+        background: #ffffff;
+      }
+
+      .option.is-active {
+        border-color: var(--valorant);
+        color: var(--valorant);
+        background: #fff;
+      }
+
+      .upload-card {
+        display: grid;
+        gap: 16px;
+        padding: 18px 16px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+
+      .upload-card + .upload-card {
+        margin-top: 14px;
+      }
+
+      .upload-card h2 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.2;
+        font-weight: 900;
+        text-wrap: balance;
+      }
+
+      .upload-field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .upload-field > span,
+      .upload-label {
+        display: block;
+        color: #303742;
+        font-size: 14px;
+        line-height: 1.2;
+        font-weight: 750;
+      }
+
+      .upload-label {
+        margin-bottom: 8px;
+      }
+
+      .upload-field input,
+      .upload-field select,
+      .upload-field textarea {
+        width: 100%;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #f8f9fb;
+        color: var(--ink);
+        outline: 0;
+      }
+
+      .upload-field input,
+      .upload-field select {
+        min-height: 44px;
+        padding: 0 12px;
+      }
+
+      .upload-field textarea {
+        min-height: 92px;
+        padding: 12px;
+        resize: vertical;
+        line-height: 1.55;
+        text-wrap: pretty;
+      }
+
+      .upload-field input:focus,
+      .upload-field select:focus,
+      .upload-field textarea:focus {
+        border-color: rgba(255, 70, 85, 0.7);
+        box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.12);
+      }
+
+      .upload-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .upload-choice {
+        display: flex;
+        gap: 10px;
+      }
+
+      .upload-choice .option {
+        flex: 1;
+      }
+
+      .file-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .file-input {
+        display: grid;
+        gap: 6px;
+        padding: 12px;
+        border: 1px dashed #cfd4da;
+        border-radius: 10px;
+        background: #f8f9fb;
+      }
+
+      .file-input span {
+        font-size: 14px;
+        font-weight: 750;
+      }
+
+      .file-input input {
+        min-height: 34px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .upload-note {
+        margin: 14px 0 0;
+        padding: 12px 14px;
+        border-radius: 12px;
+        color: #6b7280;
+        background: #fff0f1;
+        font-size: 13px;
+        line-height: 1.5;
+        text-wrap: pretty;
+      }
+
+      .field-error {
+        min-height: 18px;
+        color: var(--valorant);
+        font-size: 12px;
+        line-height: 1.4;
+        font-weight: 650;
+      }
+
+      .result-title {
+        margin: 24px 0 12px;
+        color: #0b1623;
+        font-size: 20px;
+        line-height: 1.2;
+        font-weight: 800;
+      }
+
+      .result-title em {
+        color: var(--valorant);
+        font-style: normal;
+      }
+
+      .result-card {
+        display: grid;
+        grid-template-columns: 64px minmax(0, 1fr) 18px;
+        gap: 12px;
+        align-items: center;
+        width: 100%;
+        min-height: 88px;
+        padding: 12px;
+        border-color: #eef0f3;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+        text-align: left;
+      }
+
+      .result-thumb {
+        position: relative;
+        overflow: hidden;
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        background: var(--soft);
+      }
+
+      .result-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .result-thumb::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 0;
+        height: 0;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        border-left: 10px solid rgba(255, 255, 255, 0.72);
+        transform: translate(-35%, -50%);
+      }
+
+      .result-card strong {
+        margin-bottom: 8px;
+        color: #0b1623;
+        font-size: 17px;
+        line-height: 1.2;
+        font-weight: 700;
+      }
+
+      .result-card .badge-row {
+        gap: 6px;
+      }
+
+      .result-card .badge {
+        min-height: 20px;
+        padding: 0 8px;
+        font-size: 11px;
+        font-weight: 650;
+      }
+
+      .result-card p {
+        margin: 8px 0 0;
+        color: #8a94a6;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .result-card > .icon {
+        width: 18px;
+        height: 18px;
+        color: #111827;
+      }
+
+      .device.screen-filter .topbar {
+        grid-template-columns: 42px minmax(0, 1fr) 42px;
+        min-height: 64px;
+        padding-top: 8px;
+        background: rgba(255, 255, 255, 0.96);
+      }
+
+      .device.screen-filter .top-title strong {
+        color: #0b1623;
+        font-size: 22px;
+        line-height: 1.1;
+        font-weight: 850;
+      }
+
+      .device.screen-filter .top-title span {
+        display: none;
+      }
+
+      .filter-hero {
+        position: relative;
+        height: 188px;
+        margin-bottom: 16px;
+        overflow: hidden;
+        border-radius: 18px;
+        color: #fff;
+        background: #071522;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      }
+
+      .filter-hero img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .filter-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background:
+          linear-gradient(90deg, rgba(7, 21, 34, 0.88) 0%, rgba(7, 21, 34, 0.58) 48%, rgba(7, 21, 34, 0.22) 100%);
+      }
+
+      .filter-hero-content {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        align-content: end;
+        box-sizing: border-box;
+        height: 100%;
+        padding: 28px 18px 20px;
+      }
+
+      .filter-hero h1 {
+        margin: 0;
+        font-size: 38px;
+        line-height: 1;
+        font-weight: 900;
+        text-wrap: balance;
+      }
+
+      .filter-hero .map-code {
+        display: block;
+        margin-top: 10px;
+        color: rgba(255, 255, 255, 0.92);
+        font-size: 17px;
+        line-height: 1;
+        font-weight: 750;
+        text-transform: uppercase;
+      }
+
+      .hero-chip-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 0 16px;
+        border: 1px solid rgba(255, 255, 255, 0.72);
+        border-radius: 9px;
+        color: #fff;
+        font-size: 14px;
+        line-height: 1;
+        font-weight: 750;
+      }
+
+      .hero-chip.is-primary {
+        border-color: var(--valorant);
+        background: var(--valorant);
+      }
+
+      .filter-hero p {
+        margin: 18px 0 0;
+        color: rgba(255, 255, 255, 0.94);
+        font-size: 17px;
+        line-height: 1.35;
+        font-weight: 500;
+        text-wrap: pretty;
+      }
+
+      .device.screen-filter .filter-card {
+        padding: 18px 16px;
+        border-color: #eef0f3;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+      }
+
+      .device.screen-filter .filter-card h2 {
+        margin: 0 0 18px;
+        font-size: 22px;
+        line-height: 1.15;
+        font-weight: 850;
+      }
+
+      .filter-chip-row {
+        display: grid;
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 8px;
+        align-items: center;
+        min-height: 62px;
+      }
+
+      .filter-chip-row + .filter-chip-row {
+        border-top: 1px solid #eef0f3;
+      }
+
+      .filter-chip-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: #0b1623;
+        font-size: 16px;
+        font-weight: 750;
+        white-space: nowrap;
+      }
+
+      .filter-chip-label .icon {
+        width: 21px;
+        height: 21px;
+        color: var(--valorant);
+        stroke-width: 2.3;
+      }
+
+      .filter-chip-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 44px;
+        min-height: 34px;
+        padding: 0 10px;
+        border: 1px solid #e2e6eb;
+        border-radius: 8px;
+        color: #111827;
+        background: #fff;
+        font-size: 14px;
+        line-height: 1;
+        font-weight: 650;
+        box-shadow: 0 3px 8px rgba(15, 23, 42, 0.03);
+      }
+
+      .filter-chip.is-active {
+        border-color: var(--valorant);
+        color: #fff;
+        background: var(--valorant);
+        box-shadow: 0 8px 14px rgba(255, 70, 85, 0.18);
+      }
+
+      .device.screen-filter .result-title {
+        margin: 26px 0 14px;
+        color: #0b1623;
+        font-size: 22px;
+        line-height: 1.15;
+        font-weight: 850;
+      }
+
+      .lineup-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .device.screen-filter .result-card {
+        grid-template-columns: 132px minmax(0, 1fr) 16px;
+        gap: 12px;
+        min-height: 132px;
+        padding: 12px;
+        border-color: #eef0f3;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+      }
+
+      .device.screen-filter .result-thumb {
+        width: 132px;
+        height: 96px;
+        border-radius: 10px;
+      }
+
+      .device.screen-filter .result-card strong {
+        margin-bottom: 10px;
+        color: #0b1623;
+        font-size: 17px;
+        line-height: 1.2;
+        font-weight: 850;
+        white-space: normal;
+      }
+
+      .device.screen-filter .result-card .badge {
+        min-height: 24px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .result-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        color: #111827;
+        font-size: 13px;
+        line-height: 1.2;
+        font-weight: 600;
+      }
+
+      .result-meta .icon {
+        width: 17px;
+        height: 17px;
+        color: #6b7280;
+      }
+
+      .device.screen-filter .result-card p {
+        margin-top: 8px;
+        color: #8a94a6;
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .device.screen-filter .topbar {
+        min-height: 56px;
+        padding: 6px 16px 8px;
+      }
+
+      .device.screen-filter .top-title strong {
+        font-size: 17px;
+        line-height: 1.15;
+        font-weight: 700;
+      }
+
+      .device.screen-filter .content {
+        padding: 16px 16px 18px;
+        background: #f5f6f8;
+      }
+
+      .device.screen-filter .filter-hero {
+        height: 180px;
+        min-height: 180px;
+        margin-bottom: 16px;
+        border-radius: 16px;
+      }
+
+      .device.screen-filter .filter-hero-content {
+        padding: 22px 18px 18px;
+      }
+
+      .device.screen-filter .filter-hero h1 {
+        font-size: 32px;
+        line-height: 1.04;
+      }
+
+      .device.screen-filter .filter-hero .map-code {
+        margin-top: 8px;
+        font-size: 13px;
+      }
+
+      .device.screen-filter .hero-chip-row {
+        gap: 8px;
+        margin-top: 17px;
+      }
+
+      .device.screen-filter .hero-chip {
+        min-height: 28px;
+        padding: 0 13px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .device.screen-filter .filter-hero p {
+        margin-top: 16px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .device.screen-filter .filter-card {
+        padding: 16px;
+        border-radius: 16px;
+      }
+
+      .device.screen-filter .filter-card h2 {
+        margin-bottom: 12px;
+        font-size: 20px;
+        font-weight: 800;
+      }
+
+      .device.screen-filter .filter-chip-row {
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 10px;
+        min-height: 50px;
+      }
+
+      .device.screen-filter .filter-chip-label {
+        gap: 8px;
+        color: #0b1623;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .device.screen-filter .filter-chip-label .icon {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2.2;
+      }
+
+      .device.screen-filter .filter-chip-options {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 2px 1px;
+        scrollbar-width: none;
+      }
+
+      .device.screen-filter .filter-chip-options::-webkit-scrollbar {
+        display: none;
+      }
+
+      .device.screen-filter .filter-chip {
+        flex: 0 0 auto;
+        min-width: auto;
+        min-height: 30px;
+        padding: 0 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        color: #0b1623;
+        background: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: none;
+      }
+
+      .device.screen-filter .filter-chip.is-active {
+        border-color: transparent;
+        color: #fff;
+        background: var(--valorant);
+        font-weight: 700;
+        box-shadow: none;
+      }
+
+      .device.screen-filter .result-title {
+        margin: 22px 0 12px;
+        font-size: 22px;
+        font-weight: 800;
+      }
+
+      .device.screen-filter .lineup-list {
+        gap: 12px;
+      }
+
+      .device.screen-filter .result-card {
+        grid-template-columns: 132px minmax(0, 1fr) 16px;
+        gap: 12px;
+        min-height: 126px;
+        padding: 12px;
+        border: 1px solid #eef0f3;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+      }
+
+      .device.screen-filter .result-card > span:not(.result-thumb) {
+        min-width: 0;
+      }
+
+      .device.screen-filter .result-thumb {
+        width: 132px;
+        height: 96px;
+        border-radius: 10px;
+      }
+
+      .device.screen-filter .result-thumb::after {
+        display: none;
+      }
+
+      .device.screen-filter .result-card strong {
+        margin-bottom: 7px;
+        overflow: hidden;
+        color: #0b1623;
+        font-size: 16px;
+        line-height: 1.2;
+        font-weight: 800;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .device.screen-filter .result-card .badge-row {
+        gap: 6px;
+      }
+
+      .device.screen-filter .result-card .badge {
+        min-height: 20px;
+        padding: 0 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 650;
+      }
+
+      .device.screen-filter .result-meta {
+        gap: 6px;
+        margin-top: 8px;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .device.screen-filter .result-meta .icon {
+        width: 15px;
+        height: 15px;
+      }
+
+      .device.screen-filter .result-card p {
+        display: -webkit-box;
+        margin-top: 5px;
+        overflow: hidden;
+        color: #8a94a6;
+        font-size: 12px;
+        line-height: 1.25;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+      }
+
+      .device.screen-filter .result-card > .icon {
+        width: 16px;
+        height: 16px;
+        color: rgba(11, 22, 35, 0.8);
+      }
+
+      .detail-head {
+        margin-bottom: 18px;
+      }
+
+      .detail-head .badge-row {
+        margin-bottom: 20px;
+      }
+
+      .detail-head h1 {
+        margin: 0 0 10px;
+        font-size: 28px;
+        line-height: 1.18;
+        font-weight: 900;
+        text-wrap: balance;
+      }
+
+      .detail-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .step-tabs {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        margin-bottom: 16px;
+        scrollbar-width: none;
+      }
+
+      .step-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .step-tab {
+        flex: 0 0 auto;
+        min-height: 38px;
+        padding: 0 18px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        background: var(--soft);
+        font-size: 15px;
+        font-weight: 750;
+      }
+
+      .step-tab.is-active {
+        position: relative;
+        color: var(--valorant);
+        background: #fff;
+      }
+
+      .step-tab.is-active::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -4px;
+        width: 24px;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--valorant);
+        transform: translateX(-50%);
+      }
+
+      .device.screen-detail .topbar {
+        min-height: 56px;
+        padding: 6px 16px 8px;
+      }
+
+      .device.screen-detail .top-title strong {
+        color: #0b1623;
+        font-size: 17px;
+        line-height: 1.15;
+        font-weight: 700;
+      }
+
+      .device.screen-detail .top-title span {
+        margin-top: 3px;
+        color: #8a94a6;
+        font-size: 11px;
+        line-height: 1.2;
+      }
+
+      .device.screen-detail .content {
+        background: #f5f6f8;
+      }
+
+      .device.screen-detail .detail-head {
+        margin-bottom: 14px;
+      }
+
+      .device.screen-detail .detail-head .badge-row {
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .device.screen-detail .detail-head .badge {
+        min-height: 24px;
+        padding: 0 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .device.screen-detail .detail-head .badge:first-child {
+        border: 1px solid #e5e7eb;
+        color: #475569;
+        background: #fff;
+      }
+
+      .detail-meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0 0 8px;
+        color: #475569;
+        font-size: 13px;
+        line-height: 1.4;
+        font-weight: 600;
+      }
+
+      .detail-meta .icon {
+        width: 15px;
+        height: 15px;
+        color: #475569;
+      }
+
+      .device.screen-detail .detail-head h1 {
+        margin: 0 0 8px;
+        color: #0b1623;
+        font-size: 28px;
+        line-height: 1.16;
+        font-weight: 800;
+      }
+
+      .device.screen-detail .detail-head p {
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      .device.screen-detail .step-tabs {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        gap: 10px;
+        margin: 0 -16px 14px;
+        padding: 8px 16px;
+        background: rgba(245, 246, 248, 0.96);
+        scrollbar-width: none;
+      }
+
+      .device.screen-detail .step-tab {
+        min-height: 38px;
+        padding: 0 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 999px;
+        color: #475569;
+        background: #fff;
+        font-size: 13px;
+        line-height: 1;
+        font-weight: 650;
+      }
+
+      .device.screen-detail .step-tab.is-active {
+        border-color: rgba(255, 70, 85, 0.24);
+        color: var(--valorant);
+        background: #fff1f3;
+        font-weight: 700;
+      }
+
+      .device.screen-detail .step-tab.is-active::after {
+        display: none;
+      }
+
+      .detail-stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .detail-card {
+        padding: 14px;
+      }
+
+      .detail-card h2 {
+        margin: 0 0 12px;
+        font-size: 20px;
+        line-height: 1.25;
+        font-weight: 900;
+      }
+
+      .detail-card p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .image-frame {
+        overflow: hidden;
+        border-radius: 7px;
+        background: var(--deep);
+      }
+
+      .image-frame img {
+        width: 100%;
+        max-height: 230px;
+        object-fit: contain;
+      }
+
+      .image-placeholder {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 112px;
+        border: 1px solid #cfd4da;
+        color: #a1a7af;
+      }
+
+      .instructions ol {
+        margin: 0;
+        padding-left: 20px;
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 1.75;
+      }
+
+      .empty-card {
+        display: grid;
+        place-items: center;
+        min-height: 380px;
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--card);
+        text-align: center;
+        box-shadow: var(--shadow);
+      }
+
+      .empty-card h1 {
+        margin: 0 0 8px;
+        font-size: 24px;
+      }
+
+      .empty-card p {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .bottom-action {
+        position: relative;
+        z-index: 8;
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        border-top: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.97);
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 52px;
+        border-radius: 11px;
+        font-size: 19px;
+        font-weight: 850;
+      }
+
+      .primary-btn {
+        color: #fff;
+        background: var(--valorant);
+      }
+
+      .secondary-btn {
+        border: 1px solid var(--line);
+        color: var(--ink);
+        background: #fff;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        z-index: var(--z-toast);
+        max-width: min(330px, calc(100vw - 32px));
+        padding: 10px 14px;
+        border-radius: 999px;
+        color: #fff;
+        background: rgba(18, 20, 23, 0.92);
+        font-size: 13px;
+        text-align: center;
+        opacity: 0;
+        transform: translate(-50%, 8px);
+        pointer-events: none;
+        transition: opacity 160ms ease-out, transform 160ms ease-out;
+      }
+
+      .toast.is-visible {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      @media (max-width: 520px) {
+        body {
+          display: block;
+          padding: 0;
+          background: var(--bg);
+        }
+
+        .device {
+          width: 100vw;
+          height: 100dvh;
+          border: 0;
+          border-radius: 0;
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="device" id="device">
+      <div class="app">
+        <header>
+          <div class="status" aria-label="状态栏">
+            <span>9:41</span>
+            <span class="status-icons" aria-hidden="true">
+              <span class="signal"><i></i><i></i><i></i><i></i></span>
+              <span class="battery"><i></i></span>
+            </span>
+          </div>
+          <div class="topbar">
+            <button class="icon-btn tap" id="backBtn" type="button" aria-label="返回">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+            </button>
+            <div class="top-title">
+              <strong id="pageTitle">选择地图</strong>
+              <span id="pageSubtitle">只展示已整理数据的地图</span>
+            </div>
+            <button class="icon-btn tap" type="button" aria-label="最近查看">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/><path d="M9 2h6"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <main class="content">
+          <section class="screen is-active" id="home">
+            <div class="home-head">
+              <div>
+                <h1>炼狱 Line Up</h1>
+                <p>按地图、点位与攻防场景快速查询投掷方案</p>
+              </div>
+            </div>
+
+            <section class="hero-card">
+              <span class="spark one">+</span>
+              <span class="spark two">+</span>
+              <span class="hero-kicker">BRIMSTONE LINEUP</span>
+              <h2><span>炼狱</span><b>Line up</b><em>点位查询</em></h2>
+              <p>快速查询燃烧弹点位，点位根据炼狱博士视频整理</p>
+              <div class="hero-visual" aria-hidden="true">
+                <img class="brimstone-hero" src="public/assets/valorant-lineups/brimstone-banner.png" alt="" />
+              </div>
+            </section>
+
+            <section class="home-map-section" aria-label="地图">
+              <div class="section-title">
+                <h2>地图</h2>
+              </div>
+              <div class="home-map-grid" id="homeMapGrid"></div>
+            </section>
+          </section>
+
+          <section class="screen" id="map">
+            <div class="page-head">
+              <h1>选择地图</h1>
+              <p>仅展示当前已整理可查询的地图，点击卡片直接进入点位列表。</p>
+            </div>
+            <label class="search">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+              <input type="text" placeholder="搜索地图" />
+            </label>
+            <div class="map-list" id="mapList"></div>
+          </section>
+
+          <section class="screen" id="filter">
+            <section class="filter-hero" aria-label="深海明珠地图信息">
+              <img src="public/assets/valorant-lineups/pearl/pearl-official.png" alt="" />
+              <div class="filter-hero-content">
+                <h1>深海明珠</h1>
+                <span class="map-code">PEARL</span>
+                <div class="hero-chip-row">
+                  <span class="hero-chip">地图</span>
+                  <span class="hero-chip is-primary">炼狱 Line Up</span>
+                </div>
+                <p>支持按阵营、包点与类型快速筛选</p>
+              </div>
+            </section>
+
+            <section class="filter-card">
+              <h2>筛选器</h2>
+              <div class="filter-chip-row">
+                <span class="filter-chip-label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4 3 7 7 9 4-2 7-5 7-9V6l-7-3Z"/></svg>阵营</span>
+                <span class="filter-chip-options">
+                  <button class="filter-chip is-active" type="button">全部</button>
+                  <button class="filter-chip" type="button">攻方</button>
+                  <button class="filter-chip" type="button">守方</button>
+                </span>
+              </div>
+              <div class="filter-chip-row">
+                <span class="filter-chip-label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M2 12h4"/><path d="M18 12h4"/></svg>包点</span>
+                <span class="filter-chip-options">
+                  <button class="filter-chip is-active" type="button">全部</button>
+                  <button class="filter-chip" type="button">A点</button>
+                  <button class="filter-chip" type="button">B点</button>
+                  <button class="filter-chip" type="button">C点</button>
+                  <button class="filter-chip" type="button">其它</button>
+                </span>
+              </div>
+              <div class="filter-chip-row">
+                <span class="filter-chip-label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c4 0 7-3 7-7 0-3-2-5-4-7 .2 2-1 3-2 4 0-4-3-6-5-8 0 4-3 6-3 11 0 4 3 7 7 7Z"/></svg>类型</span>
+                <span class="filter-chip-options">
+                  <button class="filter-chip is-active" type="button">全部</button>
+                  <button class="filter-chip" type="button">防拆火</button>
+                  <button class="filter-chip" type="button">其它</button>
+                </span>
+              </div>
+            </section>
+
+            <h2 class="result-title">查询结果 <em>2</em> 个</h2>
+            <div class="lineup-list">
+              <button class="result-card tap" type="button" data-next="detail">
+                <span class="result-thumb"><img src="public/assets/valorant-lineups/pearl/pearl-official.png" alt="A点默认包防拆火缩略图" /></span>
+                <span>
+                  <strong>A点默认包 · 防拆火</strong>
+                  <span class="badge-row"><span class="badge blue">攻方</span><span class="badge purple">A点</span><span class="badge orange">防拆火</span></span>
+                  <span class="result-meta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>5 步教学 · 含图示说明</span>
+                  <p>查看落点、参照物、瞄准点与站位步骤</p>
+                </span>
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+              </button>
+              <button class="result-card tap" type="button" data-next="detail">
+                <span class="result-thumb"><img src="public/assets/valorant-lineups/pearl/pearl-official.png" alt="B点默认包防拆火缩略图" /></span>
+                <span>
+                  <strong>B点默认包 · 防拆火</strong>
+                  <span class="badge-row"><span class="badge blue">攻方</span><span class="badge purple">B点</span><span class="badge orange">防拆火</span></span>
+                  <span class="result-meta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>5 步教学 · 含图示说明</span>
+                  <p>查看落点、参照物、瞄准点与站位步骤</p>
+                </span>
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+              </button>
+            </div>
+          </section>
+
+          <section class="screen" id="detail">
+            <header class="detail-head">
+              <div class="badge-row">
+                <span class="badge">深海明珠</span><span class="badge blue">攻方</span><span class="badge purple">A点</span><span class="badge orange">防拆火</span>
+              </div>
+              <h1>A点默认包 · 防拆火</h1>
+              <div class="detail-meta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>5 步教学 · 含图示说明 · 推荐按顺序查看</div>
+              <p>先看火落点，再看参照物、瞄准点和站位。</p>
+            </header>
+
+            <nav class="step-tabs" aria-label="步骤导航">
+              <button class="step-tab is-active" type="button">1 火落点</button>
+              <button class="step-tab" type="button">2 参照物</button>
+              <button class="step-tab" type="button">3 瞄准点</button>
+              <button class="step-tab" type="button">4 站位</button>
+              <button class="step-tab" type="button">5 说明</button>
+            </nav>
+
+            <div class="detail-stack">
+              <article class="detail-card">
+                <h2>1. 火落点</h2>
+                <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/landing.png" alt="火落点图" /></div>
+                <p>此为燃烧弹落地点位，确保覆盖目标区域。</p>
+              </article>
+              <article class="detail-card">
+                <h2>2. 参照物 / 粘点</h2>
+                <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/reference.jpeg" alt="参照物粘点图" /></div>
+                <p>以此参照物为基准，对齐生成的瞄准点。</p>
+              </article>
+              <article class="detail-card">
+                <h2>3. 瞄准点</h2>
+                <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/aim.jpeg" alt="瞄准点图" /></div>
+                <p>将准星对准此位置，确保投掷角度一致。</p>
+              </article>
+              <article class="detail-card">
+                <h2>4. 站位点</h2>
+                <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/stand.jpeg" alt="站位点图" /></div>
+                <p>站在此位置进行投掷，视角朝向如图所示。</p>
+              </article>
+              <article class="detail-card instructions">
+                <h2>5. 操作说明</h2>
+                <ol>
+                  <li>移动到“站位点”位置，面向推荐方向。</li>
+                  <li>将准星对准“瞄准点”，保证位置和角度一致。</li>
+                  <li>轻投或跳投燃烧弹，确保轨迹与示意一致。</li>
+                  <li>投掷后火焰覆盖目标区域，延迟封锁拆包区域。</li>
+                </ol>
+              </article>
+            </div>
+          </section>
+
+          <section class="screen" id="upload">
+            <div class="page-head">
+              <h1>上传点位</h1>
+              <p>玩家提交炼狱燃烧弹点位，审核通过后进入地图查询库。</p>
+            </div>
+
+            <section class="upload-card">
+              <h2>基础信息</h2>
+              <label class="upload-field">
+                <span>点位名称</span>
+                <input id="uploadName" type="text" placeholder="例如：A点默认包 - 防拆火" />
+                <small class="field-error" id="uploadNameError"></small>
+              </label>
+              <div class="upload-grid">
+                <label class="upload-field">
+                  <span>地图</span>
+                  <select>
+                    <option>深海明珠</option>
+                    <option>日落之城</option>
+                    <option>源工重镇</option>
+                    <option>幽邃地窟</option>
+                    <option>亚海悬城</option>
+                    <option>盐海矿镇</option>
+                    <option>隐世修所</option>
+                    <option>霓虹町</option>
+                    <option>微风岛屿</option>
+                    <option>莲华古城</option>
+                    <option>裂变峡谷</option>
+                  </select>
+                </label>
+                <label class="upload-field">
+                  <span>包点</span>
+                  <select>
+                    <option>A点</option>
+                    <option>B点</option>
+                    <option>C点</option>
+                    <option>中路</option>
+                  </select>
+                </label>
+              </div>
+              <div>
+                <span class="upload-label">攻守方</span>
+                <div class="upload-choice" role="group" aria-label="攻守方">
+                  <button class="option is-active" type="button">攻方</button>
+                  <button class="option" type="button">守方</button>
+                </div>
+              </div>
+              <label class="upload-field">
+                <span>点位类型</span>
+                <select>
+                  <option>防拆火</option>
+                  <option>进攻火</option>
+                  <option>封路火</option>
+                </select>
+              </label>
+            </section>
+
+            <section class="upload-card">
+              <h2>教学内容</h2>
+              <label class="upload-field">
+                <span>操作说明</span>
+                <textarea placeholder="写清楚站位、瞄准参照物、投掷方式和落点用途。"></textarea>
+              </label>
+              <label class="upload-field">
+                <span>视频来源</span>
+                <input type="url" placeholder="粘贴 B 站 / 抖音 / 视频链接" />
+              </label>
+              <div class="file-grid">
+                <label class="file-input">
+                  <span>火落点截图</span>
+                  <input type="file" accept="image/*" />
+                </label>
+                <label class="file-input">
+                  <span>参照物 / 粘点截图</span>
+                  <input type="file" accept="image/*" />
+                </label>
+                <label class="file-input">
+                  <span>瞄准点截图</span>
+                  <input type="file" accept="image/*" />
+                </label>
+                <label class="file-input">
+                  <span>站位截图</span>
+                  <input type="file" accept="image/*" />
+                </label>
+              </div>
+            </section>
+
+            <p class="upload-note">提交后会进入待审核状态。审核通过后，点位会显示在对应地图、攻守方和包点路径下。</p>
+          </section>
+
+          <section class="screen" id="empty">
+            <div class="empty-card">
+              <div>
+                <h1 id="emptyTitle">暂无点位</h1>
+                <p id="emptyCopy">当前路径下还没有整理好的炼狱燃烧弹数据。补充数据后，这里会替换为点位卡片。</p>
+                <button class="secondary-btn tap" type="button" data-next="map">重新选择</button>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer class="bottom-action">
+          <button class="primary-btn tap" id="primaryAction" type="button">开始查询</button>
+        </footer>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      const screens = Array.from(document.querySelectorAll(".screen"));
+      const backBtn = document.querySelector("#backBtn");
+      const primaryAction = document.querySelector("#primaryAction");
+      const pageTitle = document.querySelector("#pageTitle");
+      const pageSubtitle = document.querySelector("#pageSubtitle");
+      const device = document.querySelector("#device");
+      const toast = document.querySelector("#toast");
+      const homeMapGrid = document.querySelector("#homeMapGrid");
+      const mapList = document.querySelector("#mapList");
+      const mapSearch = document.querySelector(".search input");
+      const emptyTitle = document.querySelector("#emptyTitle");
+      const emptyCopy = document.querySelector("#emptyCopy");
+      const uploadName = document.querySelector("#uploadName");
+      const uploadNameError = document.querySelector("#uploadNameError");
+      const historyStack = ["home"];
+      let current = "home";
+      let selectedMap = "pearl";
+      let toastTimer;
+
+      const mapCatalog = [
+        {
+          slug: "pearl",
+          name: "深海明珠",
+          code: "PEARL",
+          image: "public/assets/valorant-lineups/pearl/pearl-official.png",
+          meta: "攻方 · A点 · 防拆火",
+          count: "已整理 1 个点位",
+          hasLineup: true
+        },
+        { slug: "sunset", name: "日落之城", code: "SUNSET", image: "public/assets/valorant-lineups/maps/sunset.avif" },
+        { slug: "bind", name: "源工重镇", code: "BIND", image: "public/assets/valorant-lineups/maps/bind.avif" },
+        { slug: "abyss", name: "幽邃地窟", code: "ABYSS", image: "public/assets/valorant-lineups/maps/abyss.avif" },
+        { slug: "ascent", name: "亚海悬城", code: "ASCENT", image: "public/assets/valorant-lineups/maps/ascent.avif" },
+        { slug: "salt-mine", name: "盐海矿镇", code: "SALT MINE", image: "public/assets/valorant-lineups/maps/salt-mine.avif" },
+        { slug: "haven", name: "隐世修所", code: "HAVEN", image: "public/assets/valorant-lineups/maps/haven.avif" },
+        { slug: "split", name: "霓虹町", code: "SPLIT", image: "public/assets/valorant-lineups/maps/split.avif" },
+        { slug: "breeze", name: "微风岛屿", code: "BREEZE", image: "public/assets/valorant-lineups/maps/breeze.avif" },
+        { slug: "lotus", name: "莲华古城", code: "LOTUS", image: "public/assets/valorant-lineups/maps/lotus.avif" },
+        { slug: "fracture", name: "裂变峡谷", code: "FRACTURE", image: "public/assets/valorant-lineups/maps/fracture.webp" }
+      ];
+
+      const meta = {
+        home: ["炼狱 Line Up", "按地图、点位与攻防场景快速查询投掷方案", "开始查询", "map"],
+        map: ["选择地图", "选择地图查看炼狱燃烧弹点位", "进入深海明珠点位", "filter"],
+        filter: ["深海明珠", "", "查看详情", "detail"],
+        detail: ["A点默认包", "深海明珠 · 攻方 · 防拆火", "返回点位列表", "filter"],
+        upload: ["点位上传", "提交后等待审核入库", "提交审核", "upload"],
+        empty: ["暂无点位", "暂无可查数据", "重新选择", "map"]
+      };
+
+      function renderHomeMaps() {
+        homeMapGrid.innerHTML = mapCatalog.map((map) => `
+          <button class="cover-map-card tap" type="button" data-map="${map.slug}">
+            <img src="${map.image}" alt="${map.name}地图封面" />
+            <span>
+              <strong>${map.name}</strong>
+              <em>${map.code}</em>
+            </span>
+          </button>
+        `).join("");
+      }
+
+      function renderMapList(keyword = "") {
+        const query = keyword.trim().toLowerCase();
+        const visibleMaps = mapCatalog.filter((map) => {
+          const text = `${map.name} ${map.code} ${map.slug}`.toLowerCase();
+          return !query || text.includes(query);
+        });
+
+        mapList.innerHTML = visibleMaps.map((map) => `
+          <button class="map-card tap" type="button" data-map="${map.slug}">
+            <img class="map-thumb" src="${map.image}" alt="${map.name}地图封面" />
+            <span>
+              <strong>${map.name}</strong>
+              <span>${map.meta || map.code}</span>
+              <p>${map.count || "地图封面"}</p>
+            </span>
+            ${map.hasLineup ? '<span class="badge green">可查询</span>' : '<span class="badge">地图</span>'}
+          </button>
+        `).join("");
+      }
+
+      function getSelectedMap() {
+        return mapCatalog.find((map) => map.slug === selectedMap) || mapCatalog[0];
+      }
+
+      function selectMap(slug) {
+        const map = mapCatalog.find((item) => item.slug === slug);
+        if (!map) return;
+        selectedMap = map.slug;
+        showScreen(map.hasLineup ? "filter" : "empty");
+      }
+
+      function bindMapCards() {
+        document.querySelectorAll("[data-map]:not([data-map-bound])").forEach((button) => {
+          button.dataset.mapBound = "true";
+          button.addEventListener("click", () => selectMap(button.dataset.map));
+        });
+
+        document.querySelectorAll(".tap:not([data-tap-bound])").forEach((control) => {
+          control.dataset.tapBound = "true";
+          control.addEventListener("pointerdown", () => {
+            control.classList.add("is-pressed");
+            setTimeout(() => control.classList.remove("is-pressed"), 120);
+          });
+        });
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("is-visible");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 1500);
+      }
+
+      function submitUpload() {
+        const name = uploadName.value.trim();
+        if (!name) {
+          uploadNameError.textContent = "请先填写点位名称";
+          uploadName.focus();
+          return;
+        }
+        uploadNameError.textContent = "";
+        showToast("点位已提交，等待审核");
+      }
+
+      function showScreen(id, push = true) {
+        if (!meta[id]) return;
+        screens.forEach((screen) => screen.classList.toggle("is-active", screen.id === id));
+        current = id;
+        if (push && historyStack[historyStack.length - 1] !== id) historyStack.push(id);
+        pageTitle.textContent = meta[id][0];
+        pageSubtitle.textContent = meta[id][1];
+        primaryAction.textContent = meta[id][2];
+        if (id === "empty") {
+          const map = getSelectedMap();
+          pageSubtitle.textContent = map.name;
+          emptyTitle.textContent = `${map.name}暂无点位`;
+          emptyCopy.textContent = `${map.name}暂未录入炼狱燃烧弹点位。补充数据后，这里会替换为点位卡片。`;
+        }
+        backBtn.style.visibility = current === "home" ? "hidden" : "visible";
+        device.classList.toggle("screen-home", current === "home");
+        device.classList.toggle("screen-filter", current === "filter");
+        device.classList.toggle("screen-detail", current === "detail");
+        document.querySelector(".content").scrollTop = 0;
+      }
+
+      function goBack() {
+        if (current === "home") return;
+        historyStack.pop();
+        showScreen(historyStack[historyStack.length - 1] || "home", false);
+      }
+
+      document.querySelectorAll("[data-next]").forEach((button) => {
+        button.addEventListener("click", () => showScreen(button.dataset.next));
+      });
+
+      document.querySelectorAll(".upload-choice .option").forEach((button) => {
+        button.addEventListener("click", () => {
+          button.parentElement.querySelectorAll(".option").forEach((option) => option.classList.remove("is-active"));
+          button.classList.add("is-active");
+        });
+      });
+
+      document.querySelectorAll(".filter-chip").forEach((button) => {
+        button.addEventListener("click", () => {
+          button.parentElement.querySelectorAll(".filter-chip").forEach((chip) => chip.classList.remove("is-active"));
+          button.classList.add("is-active");
+        });
+      });
+
+      mapSearch.addEventListener("input", () => {
+        renderMapList(mapSearch.value);
+        bindMapCards();
+      });
+
+      uploadName.addEventListener("input", () => {
+        if (uploadName.value.trim()) uploadNameError.textContent = "";
+      });
+
+      primaryAction.addEventListener("click", () => {
+        if (current === "upload") {
+          submitUpload();
+          return;
+        }
+        showScreen(meta[current][3]);
+      });
+      backBtn.addEventListener("click", goBack);
+      renderHomeMaps();
+      renderMapList();
+      bindMapCards();
+      showScreen("home", false);
+    </script>
+  </body>
+</html>

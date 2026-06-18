@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>伦理申请审核工作台</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --ink: #172033;
+      --muted: #647084;
+      --line: #dce3ec;
+      --primary: #176b87;
+      --primary-dark: #0f5269;
+      --success: #16794f;
+      --warning: #b26a00;
+      --danger: #b42318;
+      --info: #2563eb;
+      --shadow: 0 16px 42px rgba(34, 51, 84, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button,
+    a.button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 36px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0 14px;
+      color: #fff;
+      background: var(--primary);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+      white-space: nowrap;
+    }
+
+    button:hover,
+    a.button:hover {
+      background: var(--primary-dark);
+    }
+
+    button.secondary,
+    a.button.secondary {
+      background: #fff;
+      border-color: var(--line);
+      color: var(--ink);
+    }
+
+    button.secondary:hover,
+    a.button.secondary:hover {
+      background: var(--surface-soft);
+      border-color: #b9c6d6;
+    }
+
+    button.text {
+      min-height: auto;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--primary);
+    }
+
+    button.text:hover {
+      background: transparent;
+      color: var(--primary-dark);
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      padding: 24px 18px;
+      border-right: 1px solid var(--line);
+      background: #102437;
+      color: #d8e5ef;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: #1d7f9d;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      border-radius: 6px;
+      padding: 0 12px;
+      color: #b9c9d7;
+      text-decoration: none;
+    }
+
+    .nav a.active,
+    .nav a:hover {
+      background: rgba(255, 255, 255, 0.11);
+      color: #fff;
+    }
+
+    .content {
+      min-width: 0;
+      padding: 24px clamp(18px, 3vw, 36px) 42px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .topbar h1 {
+      margin: 0 0 6px;
+      font-size: clamp(24px, 2.6vw, 34px);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .topbar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      background: #fff;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e4f2f6;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card,
+    .panel,
+    .detail-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card {
+      position: relative;
+      min-height: 128px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      right: -24px;
+      top: -24px;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: rgba(23, 107, 135, 0.1);
+    }
+
+    .stat-label {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      margin: 0;
+      font-size: 38px;
+      font-weight: 750;
+      line-height: 1;
+    }
+
+    .stat-value span {
+      padding-bottom: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .panel {
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 58px;
+      border-bottom: 1px solid var(--line);
+      padding: 0 18px;
+      background: #fbfcfe;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 14px;
+      padding: 18px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    input,
+    select {
+      min-height: 38px;
+      padding: 0 10px;
+    }
+
+    textarea {
+      min-height: 136px;
+      resize: vertical;
+      padding: 10px 12px;
+      line-height: 1.6;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(23, 107, 135, 0.13);
+    }
+
+    .filter-actions {
+      display: flex;
+      align-items: end;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    th {
+      background: #fbfcfe;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    tbody tr:hover {
+      background: #f8fbfd;
+    }
+
+    .title-cell {
+      font-weight: 650;
+      color: #102437;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status.pending {
+      background: #fff4df;
+      color: var(--warning);
+    }
+
+    .status.recheck {
+      background: #eef4ff;
+      color: var(--info);
+    }
+
+    .status.passed {
+      background: #eaf7ef;
+      color: var(--success);
+    }
+
+    .empty-row {
+      height: 112px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .detail-view {
+      display: none;
+    }
+
+    .detail-view.active,
+    .workbench-view.active {
+      display: block;
+    }
+
+    .workbench-view.hidden {
+      display: none;
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.9fr) minmax(360px, 1.1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .detail-card {
+      overflow: hidden;
+    }
+
+    .detail-card h2 {
+      margin: 0;
+      border-bottom: 1px solid var(--line);
+      padding: 16px 18px;
+      background: #fbfcfe;
+      font-size: 17px;
+    }
+
+    .detail-body {
+      padding: 18px;
+    }
+
+    .meta-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 0;
+    }
+
+    .meta-list div {
+      min-width: 0;
+    }
+
+    .meta-list dt {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .meta-list dd {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .summary-text {
+      margin: 16px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .attachment-list {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .attachment {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--surface-soft);
+    }
+
+    .attachment strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .attachment span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .attachment-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .preview-frame {
+      min-height: 300px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .preview-frame iframe {
+      width: 100%;
+      height: 360px;
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+
+    .review-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 50;
+      display: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      background: #102437;
+      color: #fff;
+      box-shadow: var(--shadow);
+      font-size: 14px;
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    @media (max-width: 1080px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 18px;
+      }
+
+      .brand {
+        margin: 0;
+      }
+
+      .nav {
+        display: flex;
+        overflow-x: auto;
+      }
+
+      .nav a {
+        white-space: nowrap;
+      }
+
+      .filter-grid {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+      }
+
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .content {
+        padding: 18px 12px 34px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .stats-grid,
+      .filter-grid,
+      .meta-list {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-actions {
+        justify-content: stretch;
+      }
+
+      .filter-actions button {
+        flex: 1;
+      }
+
+      .attachment {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .attachment-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .attachment-actions button,
+      .attachment-actions a {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">审</span>
+        <span>伦理审查中心</span>
+      </div>
+      <nav class="nav" aria-label="主导航">
+        <a class="active" href="#workbench">审核工作台</a>
+        <a href="#archive">申请归档</a>
+        <a href="#experts">专家管理</a>
+        <a href="#settings">规则配置</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section id="workbenchView" class="workbench-view active">
+        <div class="topbar">
+          <div>
+            <h1>伦理申请审核工作台</h1>
+            <p>2026年6月5日，当前轮值审核组：医学伦理委员会一组</p>
+          </div>
+          <div class="user-chip">
+            <span class="avatar">周</span>
+            <span>评审专家</span>
+          </div>
+        </div>
+
+        <section class="stats-grid" aria-label="申请状态统计">
+          <article class="stat-card">
+            <p class="stat-label">待审查申请</p>
+            <p class="stat-value" id="pendingCount">0<span>件</span></p>
+          </article>
+          <article class="stat-card">
+            <p class="stat-label">待复审申请</p>
+            <p class="stat-value" id="recheckCount">0<span>件</span></p>
+          </article>
+          <article class="stat-card">
+            <p class="stat-label">已通过申请</p>
+            <p class="stat-value" id="passedCount">0<span>件</span></p>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>组合查询</h2>
+            <span id="resultCount">0 条结果</span>
+          </div>
+          <form class="filter-grid" id="filterForm">
+            <label>
+              课题组名称
+              <input id="groupFilter" type="search" placeholder="输入课题组名称" />
+            </label>
+            <label>
+              课题来源
+              <select id="sourceFilter">
+                <option value="">全部来源</option>
+                <option>国家自然科学基金</option>
+                <option>省重点研发计划</option>
+                <option>院内创新项目</option>
+                <option>横向合作课题</option>
+              </select>
+            </label>
+            <label>
+              课题负责人
+              <input id="leaderFilter" type="search" placeholder="输入负责人姓名" />
+            </label>
+            <label>
+              申请人
+              <input id="applicantFilter" type="search" placeholder="输入申请人姓名" />
+            </label>
+            <label>
+              申请状态
+              <select id="statusFilter">
+                <option value="">全部状态</option>
+                <option>待审核</option>
+                <option>待复审</option>
+                <option>已通过</option>
+              </select>
+            </label>
+            <div class="filter-actions">
+              <button type="reset" class="secondary">重置</button>
+              <button type="submit">查询</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>申请列表</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 72px;">序号</th>
+                  <th>课题名称</th>
+                  <th style="width: 128px;">课题负责人</th>
+                  <th style="width: 112px;">申请人</th>
+                  <th style="width: 112px;">状态</th>
+                  <th style="width: 132px;">申请时间</th>
+                  <th style="width: 104px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="applicationRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="detailView" class="detail-view">
+        <div class="topbar">
+          <div>
+            <h1 id="detailTitle">审核详情</h1>
+            <p id="detailSubtitle">申请材料与评审意见</p>
+          </div>
+          <button class="secondary" id="backButton" type="button">返回工作台</button>
+        </div>
+
+        <div class="detail-layout">
+          <div class="detail-card">
+            <h2>申请信息</h2>
+            <div class="detail-body">
+              <dl class="meta-list" id="detailMeta"></dl>
+              <p class="summary-text" id="detailSummary"></p>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <h2>申报附件</h2>
+            <div class="detail-body">
+              <div class="attachment-list" id="attachmentList"></div>
+              <div class="preview-frame">
+                <iframe id="previewFrame" title="附件在线预览"></iframe>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <h2>评审意见</h2>
+            <div class="detail-body">
+              <form class="review-form" id="reviewForm">
+                <label>
+                  专家意见
+                  <textarea id="reviewOpinion" required placeholder="填写审查依据、风险评估与修改建议"></textarea>
+                </label>
+                <label>
+                  审核结论
+                  <select id="reviewConclusion" required>
+                    <option value="">请选择结论</option>
+                    <option>通过</option>
+                    <option>修改后复审</option>
+                    <option>不通过</option>
+                  </select>
+                </label>
+                <div class="filter-actions">
+                  <button type="button" class="secondary" id="saveDraftButton">暂存意见</button>
+                  <button type="submit">提交审核</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const applications = [
+      {
+        id: "IRB-202606-001",
+        title: "术后镇痛路径对骨科患者康复质量的影响研究",
+        group: "围术期护理课题组",
+        source: "院内创新项目",
+        leader: "李明",
+        applicant: "陈雅",
+        status: "待审核",
+        submittedAt: "2026-06-04",
+        summary: "拟纳入骨科择期手术患者，评估标准化镇痛路径对疼痛评分、住院时长和早期活动能力的影响。",
+        attachments: [
+          ["实验方案", "研究目的、入排标准、样本量估算、风险控制与数据管理计划。"],
+          ["知情同意书", "受试者权益、可能风险、退出机制、隐私保护与联系方式。"],
+          ["病例报告表", "基线资料、疼痛评分、用药记录、随访节点与不良事件记录。"]
+        ]
+      },
+      {
+        id: "IRB-202606-002",
+        title: "社区老年慢病管理数字化随访模型构建",
+        group: "慢病管理与健康服务课题组",
+        source: "省重点研发计划",
+        leader: "王岚",
+        applicant: "赵宁",
+        status: "待复审",
+        submittedAt: "2026-06-03",
+        summary: "前次审查要求补充隐私脱敏流程，本轮提交了数据授权边界、异常告警与人工复核方案。",
+        attachments: [
+          ["修订版实验方案", "新增数据最小化采集原则、随访频率说明和风险分级处理流程。"],
+          ["知情同意书修订说明", "突出撤回授权方式、数据保存期限和第三方系统访问限制。"],
+          ["数据安全承诺书", "研究团队的数据访问权限、日志留存和审计责任。"]
+        ]
+      },
+      {
+        id: "IRB-202606-003",
+        title: "儿童哮喘吸入治疗依从性提升干预研究",
+        group: "儿科呼吸课题组",
+        source: "国家自然科学基金",
+        leader: "孙洁",
+        applicant: "钱薇",
+        status: "待审核",
+        submittedAt: "2026-06-02",
+        summary: "通过家属教育、移动提醒和门诊复诊记录评估儿童吸入治疗依从性变化。",
+        attachments: [
+          ["实验方案", "研究设计、随机分组、干预周期、依从性指标和统计方法。"],
+          ["监护人知情同意书", "儿童受试者保护、监护人责任和风险收益说明。"]
+        ]
+      },
+      {
+        id: "IRB-202605-028",
+        title: "肿瘤患者营养风险筛查工具本地化验证",
+        group: "临床营养课题组",
+        source: "横向合作课题",
+        leader: "周航",
+        applicant: "罗珊",
+        status: "已通过",
+        submittedAt: "2026-05-29",
+        summary: "验证营养风险筛查工具在本院肿瘤患者中的信效度和临床适配性。",
+        attachments: [
+          ["实验方案", "工具验证路径、样本选择、统计分析和质量控制。"],
+          ["知情同意书", "参与方式、个人信息保护、潜在获益和退出安排。"]
+        ]
+      },
+      {
+        id: "IRB-202605-021",
+        title: "急诊分诊智能辅助系统临床可用性观察",
+        group: "急诊医学与人工智能课题组",
+        source: "院内创新项目",
+        leader: "何骁",
+        applicant: "马妍",
+        status: "已通过",
+        submittedAt: "2026-05-23",
+        summary: "观察智能辅助系统在急诊分诊场景中的辅助价值，不替代医护人员最终判断。",
+        attachments: [
+          ["实验方案", "系统边界、观察指标、人工复核机制和不良事件上报路径。"],
+          ["信息告知书", "患者数据使用范围、匿名化处理和临床决策责任说明。"]
+        ]
+      }
+    ];
+
+    const statusClass = {
+      "待审核": "pending",
+      "待复审": "recheck",
+      "已通过": "passed"
+    };
+
+    const state = {
+      currentRows: [...applications],
+      activeApplication: null
+    };
+
+    const nodes = {
+      pendingCount: document.getElementById("pendingCount"),
+      recheckCount: document.getElementById("recheckCount"),
+      passedCount: document.getElementById("passedCount"),
+      resultCount: document.getElementById("resultCount"),
+      rows: document.getElementById("applicationRows"),
+      form: document.getElementById("filterForm"),
+      workbenchView: document.getElementById("workbenchView"),
+      detailView: document.getElementById("detailView"),
+      detailTitle: document.getElementById("detailTitle"),
+      detailSubtitle: document.getElementById("detailSubtitle"),
+      detailMeta: document.getElementById("detailMeta"),
+      detailSummary: document.getElementById("detailSummary"),
+      attachmentList: document.getElementById("attachmentList"),
+      previewFrame: document.getElementById("previewFrame"),
+      backButton: document.getElementById("backButton"),
+      reviewForm: document.getElementById("reviewForm"),
+      reviewOpinion: document.getElementById("reviewOpinion"),
+      reviewConclusion: document.getElementById("reviewConclusion"),
+      saveDraftButton: document.getElementById("saveDraftButton"),
+      toast: document.getElementById("toast")
+    };
+
+    function countByStatus(status) {
+      return applications.filter((item) => item.status === status).length;
+    }
+
+    function renderStats() {
+      nodes.pendingCount.innerHTML = `${countByStatus("待审核")}<span>件</span>`;
+      nodes.recheckCount.innerHTML = `${countByStatus("待复审")}<span>件</span>`;
+      nodes.passedCount.innerHTML = `${countByStatus("已通过")}<span>件</span>`;
+    }
+
+    function includesText(value, keyword) {
+      return !keyword || value.toLowerCase().includes(keyword.toLowerCase());
+    }
+
+    function getFilters() {
+      return {
+        group: document.getElementById("groupFilter").value.trim(),
+        source: document.getElementById("sourceFilter").value,
+        leader: document.getElementById("leaderFilter").value.trim(),
+        applicant: document.getElementById("applicantFilter").value.trim(),
+        status: document.getElementById("statusFilter").value
+      };
+    }
+
+    function applyFilters() {
+      const filters = getFilters();
+      state.currentRows = applications.filter((item) => {
+        return includesText(item.group, filters.group)
+          && (!filters.source || item.source === filters.source)
+          && includesText(item.leader, filters.leader)
+          && includesText(item.applicant, filters.applicant)
+          && (!filters.status || item.status === filters.status);
+      });
+      renderTable();
+    }
+
+    function renderTable() {
+      nodes.resultCount.textContent = `${state.currentRows.length} 条结果`;
+      if (!state.currentRows.length) {
+        nodes.rows.innerHTML = '<tr><td class="empty-row" colspan="7">未查询到匹配的伦理申请</td></tr>';
+        return;
+      }
+
+      nodes.rows.innerHTML = state.currentRows.map((item, index) => {
+        const canReview = item.status === "待审核" || item.status === "待复审";
+        const action = canReview
+          ? `<button type="button" data-review="${item.id}">审核</button>`
+          : `<button type="button" class="secondary" data-review="${item.id}">查看</button>`;
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td class="title-cell">${item.title}</td>
+            <td>${item.leader}</td>
+            <td>${item.applicant}</td>
+            <td><span class="status ${statusClass[item.status]}">${item.status}</span></td>
+            <td>${item.submittedAt}</td>
+            <td>${action}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function buildPreviewDocument(app, attachment) {
+      return `
+        <!doctype html>
+        <html lang="zh-CN">
+        <head>
+          <meta charset="UTF-8" />
+          <style>
+            body { margin: 0; padding: 28px; color: #172033; font-family: "Microsoft YaHei", Arial, sans-serif; line-height: 1.75; }
+            h1 { margin: 0 0 16px; font-size: 22px; }
+            h2 { margin: 0 0 18px; color: #176b87; font-size: 15px; }
+            p { margin: 0 0 12px; }
+            .stamp { display: inline-block; margin-top: 18px; border: 1px solid #dce3ec; border-radius: 6px; padding: 8px 10px; color: #647084; font-size: 13px; }
+          </style>
+        </head>
+        <body>
+          <h1>${attachment[0]}</h1>
+          <h2>${app.title}</h2>
+          <p>${attachment[1]}</p>
+          <p>课题负责人：${app.leader}，申请人：${app.applicant}，申请编号：${app.id}。</p>
+          <span class="stamp">在线预览稿</span>
+        </body>
+        </html>
+      `;
+    }
+
+    function dataUrl(content) {
+      return `data:text/html;charset=utf-8,${encodeURIComponent(content)}`;
+    }
+
+    function downloadUrl(app, attachment) {
+      const content = `${attachment[0]}\n\n课题：${app.title}\n编号：${app.id}\n\n${attachment[1]}`;
+      return `data:text/plain;charset=utf-8,${encodeURIComponent(content)}`;
+    }
+
+    function previewAttachment(index) {
+      const app = state.activeApplication;
+      const attachment = app.attachments[index];
+      nodes.previewFrame.src = dataUrl(buildPreviewDocument(app, attachment));
+    }
+
+    function renderDetail(app) {
+      state.activeApplication = app;
+      nodes.detailTitle.textContent = app.title;
+      nodes.detailSubtitle.textContent = `${app.id} · ${app.status} · ${app.submittedAt}`;
+      nodes.detailMeta.innerHTML = [
+        ["课题组名称", app.group],
+        ["课题来源", app.source],
+        ["课题负责人", app.leader],
+        ["申请人", app.applicant],
+        ["当前状态", app.status],
+        ["申请时间", app.submittedAt]
+      ].map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("");
+      nodes.detailSummary.textContent = app.summary;
+      nodes.attachmentList.innerHTML = app.attachments.map((attachment, index) => `
+        <article class="attachment">
+          <div>
+            <strong>${attachment[0]}</strong>
+            <span>${app.id}-${index + 1}.txt</span>
+          </div>
+          <div class="attachment-actions">
+            <button type="button" class="secondary" data-preview="${index}">预览</button>
+            <a class="button secondary" download="${app.id}-${attachment[0]}.txt" href="${downloadUrl(app, attachment)}">下载</a>
+          </div>
+        </article>
+      `).join("");
+      nodes.reviewOpinion.value = "";
+      nodes.reviewConclusion.value = "";
+      previewAttachment(0);
+    }
+
+    function openDetail(appId) {
+      const app = applications.find((item) => item.id === appId);
+      if (!app) return;
+      renderDetail(app);
+      nodes.workbenchView.classList.add("hidden");
+      nodes.detailView.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function closeDetail() {
+      nodes.detailView.classList.remove("active");
+      nodes.workbenchView.classList.remove("hidden");
+      state.activeApplication = null;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showToast(message) {
+      nodes.toast.textContent = message;
+      nodes.toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => nodes.toast.classList.remove("show"), 2400);
+    }
+
+    nodes.form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      applyFilters();
+    });
+
+    nodes.form.addEventListener("reset", () => {
+      window.setTimeout(applyFilters, 0);
+    });
+
+    nodes.rows.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-review]");
+      if (button) openDetail(button.dataset.review);
+    });
+
+    nodes.attachmentList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-preview]");
+      if (button) previewAttachment(Number(button.dataset.preview));
+    });
+
+    nodes.backButton.addEventListener("click", closeDetail);
+
+    nodes.saveDraftButton.addEventListener("click", () => {
+      showToast("评审意见已暂存");
+    });
+
+    nodes.reviewForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!state.activeApplication) return;
+      const conclusion = nodes.reviewConclusion.value;
+      if (conclusion === "通过") state.activeApplication.status = "已通过";
+      if (conclusion === "修改后复审") state.activeApplication.status = "待复审";
+      if (conclusion === "不通过") state.activeApplication.status = "不通过";
+      renderStats();
+      applyFilters();
+      closeDetail();
+      showToast("审核结论已提交");
+    });
+
+    renderStats();
+    renderTable();
+  </script>
+</body>
+</html>

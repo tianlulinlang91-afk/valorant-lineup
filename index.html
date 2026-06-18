@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自助打印小程序 Demo</title>
+    <style>
+      :root {
+        --orange: #ff8a00;
+        --orange-deep: #ff6a00;
+        --orange-soft: #fff2df;
+        --ink: #101216;
+        --muted: #8e8e93;
+        --line: #eeeeee;
+        --bg: #f7f6f3;
+        --card: rgba(255, 255, 255, 0.96);
+        --shadow: 0 14px 35px rgba(167, 116, 48, 0.13);
+        --soft-shadow: 0 10px 28px rgba(44, 34, 19, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        background:
+          radial-gradient(circle at 24% 12%, rgba(255, 199, 106, 0.17), transparent 30%),
+          linear-gradient(135deg, #efefef 0%, #ffffff 48%, #f0ede8 100%);
+        color: var(--ink);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .phone {
+        position: relative;
+        width: 390px;
+        min-height: 100vh;
+        overflow: hidden;
+        background:
+          linear-gradient(180deg, rgba(255, 252, 245, 0.92) 0%, rgba(255, 255, 255, 0.97) 38%),
+          #fffdf8;
+        box-shadow: 0 0 55px rgba(0, 0, 0, 0.12);
+      }
+
+      .page {
+        min-height: 100vh;
+        padding-bottom: 108px;
+      }
+
+      .status-bar {
+        height: 42px;
+        padding: 15px 22px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .time {
+        font-size: 18px;
+      }
+
+      .system-icons {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .signal {
+        width: 22px;
+        height: 14px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        align-items: end;
+        gap: 2px;
+      }
+
+      .signal i {
+        display: block;
+        width: 4px;
+        border-radius: 3px;
+        background: #050505;
+      }
+
+      .signal i:nth-child(1) { height: 5px; }
+      .signal i:nth-child(2) { height: 8px; }
+      .signal i:nth-child(3) { height: 11px; }
+      .signal i:nth-child(4) { height: 14px; }
+
+      .wifi {
+        position: relative;
+        width: 20px;
+        height: 15px;
+        overflow: hidden;
+      }
+
+      .wifi::before,
+      .wifi::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        border: 3px solid #050505;
+        border-color: #050505 transparent transparent transparent;
+        border-radius: 50%;
+        transform: translateX(-50%);
+      }
+
+      .wifi::before {
+        top: 0;
+        width: 24px;
+        height: 24px;
+      }
+
+      .wifi::after {
+        top: 6px;
+        width: 13px;
+        height: 13px;
+      }
+
+      .wifi i {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #050505;
+        transform: translateX(-50%);
+      }
+
+      .battery {
+        position: relative;
+        width: 25px;
+        height: 13px;
+        border: 1.8px solid #050505;
+        border-radius: 4px;
+        padding: 2px;
+      }
+
+      .battery::after {
+        content: "";
+        position: absolute;
+        right: -4px;
+        top: 4px;
+        width: 2px;
+        height: 5px;
+        border-radius: 0 2px 2px 0;
+        background: #050505;
+      }
+
+      .battery i {
+        display: block;
+        height: 100%;
+        width: 78%;
+        border-radius: 2px;
+        background: #050505;
+      }
+
+      .hero {
+        position: relative;
+        height: 190px;
+        padding: 52px 14px 0;
+      }
+
+      .campus {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 84% 35%, rgba(255, 181, 53, 0.21), transparent 24%),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 250, 239, 0.92) 47%, rgba(255, 239, 196, 0.68) 100%);
+      }
+
+      .building {
+        position: absolute;
+        right: -8px;
+        top: 36px;
+        width: 165px;
+        height: 74px;
+        opacity: 0.47;
+      }
+
+      .building span {
+        position: absolute;
+        bottom: 0;
+        background: linear-gradient(180deg, #ffd983, #fff0c9);
+        border-radius: 6px 6px 0 0;
+      }
+
+      .building span:nth-child(1) {
+        left: 0;
+        width: 64px;
+        height: 37px;
+      }
+
+      .building span:nth-child(2) {
+        left: 54px;
+        width: 48px;
+        height: 66px;
+      }
+
+      .building span:nth-child(3) {
+        right: 0;
+        width: 78px;
+        height: 42px;
+      }
+
+      .plane {
+        position: absolute;
+        right: 92px;
+        top: 14px;
+        width: 54px;
+        height: 54px;
+        background: linear-gradient(135deg, #ffd34d 0%, #ff9d09 100%);
+        clip-path: polygon(0 54%, 100% 0, 70% 76%, 50% 56%, 26% 76%);
+        opacity: 0.74;
+        transform: rotate(-7deg);
+      }
+
+      .hero-copy {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .avatar {
+        width: 55px;
+        height: 55px;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 50% 35%, #ffd6c5 0 12%, transparent 13%),
+          radial-gradient(circle at 50% 38%, #5a2d22 0 26%, transparent 27%),
+          linear-gradient(180deg, #f8d0be 0 52%, #ffffff 52% 100%);
+        box-shadow: 0 9px 20px rgba(74, 50, 20, 0.13);
+      }
+
+      .avatar::after {
+        content: "";
+        width: 23px;
+        height: 12px;
+        margin-top: 18px;
+        border-radius: 12px 12px 4px 4px;
+        background: #fff;
+      }
+
+      .greeting h1 {
+        margin: 0 0 7px;
+        font-size: 22px;
+        line-height: 1.12;
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .greeting span {
+        color: var(--orange-deep);
+      }
+
+      .greeting p {
+        margin: 0;
+        color: #414141;
+        font-size: 15px;
+      }
+
+      .printer-scene {
+        position: absolute;
+        right: -15px;
+        bottom: 2px;
+        width: 158px;
+        height: 112px;
+        z-index: 1;
+        transform: scale(0.84);
+        transform-origin: right bottom;
+      }
+
+      .printer {
+        position: absolute;
+        right: 4px;
+        bottom: 17px;
+        width: 116px;
+        height: 67px;
+        border-radius: 15px 15px 13px 13px;
+        background: linear-gradient(180deg, #fff 0%, #ffe7c4 100%);
+        box-shadow: 0 15px 26px rgba(172, 105, 12, 0.18);
+      }
+
+      .printer::before {
+        content: "";
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 6px;
+        height: 34px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #ff9515, #ff6f00);
+      }
+
+      .printer::after {
+        content: "";
+        position: absolute;
+        left: 30px;
+        right: 30px;
+        bottom: 13px;
+        height: 18px;
+        border-radius: 5px;
+        background: #2e2a27;
+      }
+
+      .paper-in,
+      .paper-out {
+        position: absolute;
+        z-index: 3;
+        width: 68px;
+        height: 51px;
+        border-radius: 3px;
+        background:
+          linear-gradient(#cfd4d8 0 0) 14px 13px / 38px 3px no-repeat,
+          linear-gradient(#dfe2e5 0 0) 14px 24px / 43px 3px no-repeat,
+          linear-gradient(#eef0f2 0 0) 14px 35px / 34px 3px no-repeat,
+          #fff;
+        box-shadow: 0 6px 18px rgba(118, 91, 44, 0.12);
+      }
+
+      .paper-in {
+        right: 26px;
+        top: 5px;
+        transform: rotate(5deg);
+      }
+
+      .paper-out {
+        right: 34px;
+        bottom: 0;
+        height: 44px;
+        transform: rotate(9deg);
+      }
+
+      .books {
+        position: absolute;
+        left: 0;
+        bottom: 12px;
+        width: 58px;
+        height: 36px;
+        border-radius: 3px;
+        background:
+          linear-gradient(#ff8a00, #ff8a00) 0 25px / 58px 8px no-repeat,
+          linear-gradient(#ffd56c, #ffd56c) 8px 15px / 45px 7px no-repeat,
+          linear-gradient(#ff9d00, #ff9d00) 3px 5px / 48px 8px no-repeat;
+      }
+
+      .plant {
+        position: absolute;
+        right: 0;
+        bottom: 9px;
+        width: 24px;
+        height: 33px;
+        border-radius: 0 0 8px 8px;
+        background: linear-gradient(180deg, transparent 0 45%, #fff 46% 100%);
+      }
+
+      .plant::before {
+        content: "";
+        position: absolute;
+        left: 6px;
+        top: 0;
+        width: 15px;
+        height: 21px;
+        border-radius: 100% 0 100% 0;
+        background: #54b850;
+        box-shadow: -8px 8px 0 #72c46d, 7px 9px 0 #439d41;
+      }
+
+      .main-content {
+        position: relative;
+        padding: 0 14px;
+      }
+
+      .search-card {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 0 9px 0 16px;
+        border-radius: 24px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+
+      .search-icon {
+        position: relative;
+        width: 25px;
+        height: 25px;
+        flex: 0 0 auto;
+        border: 3px solid #8c8c8f;
+        border-radius: 50%;
+      }
+
+      .search-icon::after {
+        content: "";
+        position: absolute;
+        width: 10px;
+        height: 3px;
+        right: -7px;
+        bottom: -3px;
+        border-radius: 3px;
+        background: #8c8c8f;
+        transform: rotate(45deg);
+      }
+
+      .search-card input {
+        min-width: 0;
+        flex: 1;
+        border: 0;
+        outline: 0;
+        color: #333;
+        background: transparent;
+        font-size: 15px;
+      }
+
+      .search-card input::placeholder {
+        color: #8d8d92;
+      }
+
+      .divider {
+        width: 1px;
+        height: 28px;
+        background: #d5d5d5;
+      }
+
+      .upload-btn {
+        height: 40px;
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: 0;
+        border-radius: 22px;
+        padding: 0 12px;
+        color: #fff;
+        background: linear-gradient(180deg, #ffa412 0%, #ff8500 100%);
+        font-size: 15px;
+        font-weight: 800;
+        box-shadow: 0 9px 18px rgba(255, 127, 0, 0.27);
+        cursor: pointer;
+      }
+
+      .cloud {
+        width: 21px;
+        height: 15px;
+        position: relative;
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .cloud::before,
+      .cloud::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: #fff;
+      }
+
+      .cloud::before {
+        width: 13px;
+        height: 13px;
+        left: 4px;
+        top: -7px;
+      }
+
+      .cloud::after {
+        width: 8px;
+        height: 8px;
+        right: 2px;
+        top: -4px;
+      }
+
+      .cloud i {
+        position: absolute;
+        left: 9px;
+        top: 1px;
+        width: 4px;
+        height: 12px;
+        border-radius: 4px;
+        background: var(--orange);
+        z-index: 2;
+      }
+
+      .cloud i::before {
+        content: "";
+        position: absolute;
+        left: -4px;
+        top: 0;
+        width: 10px;
+        height: 10px;
+        border-left: 4px solid var(--orange);
+        border-top: 4px solid var(--orange);
+        transform: rotate(45deg);
+      }
+
+      .quick-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 10px;
+        margin-top: 15px;
+      }
+
+      .quick-card {
+        min-height: 94px;
+        display: grid;
+        grid-template-columns: 54px 1fr 22px;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 10px;
+        border: 0;
+        border-radius: 16px;
+        background: var(--card);
+        box-shadow: var(--soft-shadow);
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .quick-card h3 {
+        margin: 0 0 9px;
+        font-size: 17px;
+        line-height: 1.1;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .quick-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .chev {
+        width: 20px;
+        height: 20px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--orange);
+        background: #fff4e8;
+        font-size: 25px;
+        line-height: 0;
+      }
+
+      .icon-tile {
+        width: 52px;
+        height: 52px;
+        position: relative;
+      }
+
+      .folder {
+        border-radius: 11px;
+        background: linear-gradient(180deg, #ffd74a 0%, #ff9600 100%);
+        box-shadow: 0 8px 16px rgba(255, 145, 0, 0.18);
+      }
+
+      .folder::before {
+        content: "";
+        position: absolute;
+        left: 6px;
+        top: -8px;
+        width: 48px;
+        height: 31px;
+        border-radius: 6px;
+        background:
+          linear-gradient(#ffd9a8 0 0) 13px 10px / 25px 3px no-repeat,
+          linear-gradient(#ffd9a8 0 0) 13px 20px / 33px 3px no-repeat,
+          #fffaf3;
+        transform: rotate(8deg);
+        box-shadow: 0 8px 16px rgba(151, 92, 18, 0.12);
+      }
+
+      .folder::after {
+        content: "";
+        position: absolute;
+        left: 22px;
+        top: 23px;
+        width: 14px;
+        height: 25px;
+        border-radius: 4px;
+        background: #fff;
+        box-shadow: 0 -8px 0 8px #fff;
+        clip-path: polygon(50% 0, 100% 45%, 73% 45%, 73% 100%, 27% 100%, 27% 45%, 0 45%);
+      }
+
+      .qr {
+        border-radius: 13px;
+        background:
+          linear-gradient(90deg, var(--orange) 0 4px, transparent 4px calc(100% - 4px), var(--orange) calc(100% - 4px)) 0 0 / 100% 18px no-repeat,
+          linear-gradient(90deg, var(--orange) 0 4px, transparent 4px calc(100% - 4px), var(--orange) calc(100% - 4px)) 0 100% / 100% 18px no-repeat;
+      }
+
+      .qr::before {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        background:
+          linear-gradient(var(--orange) 0 0) 0 0 / 13px 13px no-repeat,
+          linear-gradient(var(--orange) 0 0) 24px 0 / 13px 13px no-repeat,
+          linear-gradient(var(--orange) 0 0) 0 24px / 13px 13px no-repeat,
+          linear-gradient(var(--orange) 0 0) 25px 27px / 7px 7px no-repeat,
+          linear-gradient(var(--orange) 0 0) 37px 20px / 5px 17px no-repeat,
+          linear-gradient(var(--orange) 0 0) 18px 20px / 6px 6px no-repeat;
+      }
+
+      .doc {
+        border-radius: 8px;
+        background:
+          linear-gradient(#fff 0 0) 14px 16px / 31px 4px no-repeat,
+          linear-gradient(#fff 0 0) 14px 30px / 39px 4px no-repeat,
+          linear-gradient(#fff 0 0) 14px 44px / 26px 4px no-repeat,
+          linear-gradient(135deg, transparent 0 72%, #ffd16f 73% 100%),
+          linear-gradient(180deg, #ffae10, #ff7600);
+        box-shadow: 0 9px 17px rgba(255, 132, 0, 0.18);
+      }
+
+      .doc::after {
+        content: "";
+        position: absolute;
+        right: -5px;
+        bottom: -5px;
+        width: 28px;
+        height: 28px;
+        border: 4px solid #fff;
+        border-radius: 50%;
+        background:
+          linear-gradient(#fff 0 0) 12px 5px / 4px 13px no-repeat,
+          linear-gradient(#fff 0 0) 12px 15px / 10px 4px no-repeat,
+          #ffc24b;
+      }
+
+      .map {
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, transparent 47%, #e3bb4e 48% 52%, transparent 53%),
+          linear-gradient(45deg, transparent 40%, #e3bb4e 41% 46%, transparent 47%),
+          #fff1bf;
+        box-shadow: inset 0 -5px 0 rgba(255, 182, 54, 0.22);
+      }
+
+      .map::before {
+        content: "";
+        position: absolute;
+        left: 17px;
+        top: -4px;
+        width: 34px;
+        height: 46px;
+        border-radius: 50% 50% 50% 0;
+        background: linear-gradient(180deg, #ff9e00, #ff6f00);
+        transform: rotate(-45deg);
+        box-shadow: 0 10px 14px rgba(255, 117, 0, 0.24);
+      }
+
+      .map::after {
+        content: "";
+        position: absolute;
+        left: 30px;
+        top: 8px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #fff;
+      }
+
+      .panel {
+        margin-top: 14px;
+        padding: 17px 14px 16px;
+        border-radius: 18px;
+        background: var(--card);
+        box-shadow: var(--soft-shadow);
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .panel-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        font-size: 19px;
+        font-weight: 900;
+      }
+
+      .panel-title::before {
+        content: "";
+        width: 5px;
+        height: 23px;
+        border-radius: 8px;
+        background: var(--orange-deep);
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        color: var(--orange-deep);
+        background: #fff3e5;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .clock {
+        width: 16px;
+        height: 16px;
+        position: relative;
+        border: 2px solid currentColor;
+        border-radius: 50%;
+      }
+
+      .clock::before,
+      .clock::after {
+        content: "";
+        position: absolute;
+        left: 6px;
+        top: 3px;
+        width: 2px;
+        height: 6px;
+        border-radius: 2px;
+        background: currentColor;
+      }
+
+      .clock::after {
+        top: 7px;
+        width: 6px;
+        height: 2px;
+      }
+
+      .order {
+        display: grid;
+        grid-template-columns: 84px 1fr;
+        gap: 13px;
+      }
+
+      .file-preview {
+        width: 84px;
+        height: 104px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #eeeeee;
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      .word-doc {
+        width: 58px;
+        height: 76px;
+        position: relative;
+        border-radius: 5px;
+        background:
+          linear-gradient(#dcdfe2 0 0) 15px 18px / 27px 4px no-repeat,
+          linear-gradient(#e4e6e8 0 0) 15px 32px / 36px 4px no-repeat,
+          linear-gradient(#e4e6e8 0 0) 15px 45px / 31px 4px no-repeat,
+          linear-gradient(#e4e6e8 0 0) 15px 58px / 22px 4px no-repeat,
+          linear-gradient(135deg, transparent 0 72%, #dfe2e5 73% 100%),
+          #f5f6f7;
+        box-shadow: 0 7px 16px rgba(10, 20, 30, 0.07);
+      }
+
+      .word-doc::before {
+        content: "W";
+        position: absolute;
+        left: -8px;
+        top: -5px;
+        width: 27px;
+        height: 27px;
+        display: grid;
+        place-items: center;
+        border-radius: 4px;
+        color: #fff;
+        background: linear-gradient(135deg, #65aeff, #2d75d6);
+        font-weight: 900;
+        font-size: 15px;
+      }
+
+      .order-info h3 {
+        margin: 2px 0 8px;
+        font-size: 16px;
+        line-height: 1.28;
+      }
+
+      .meta {
+        margin: 0 0 11px;
+        color: #8e8e93;
+        font-size: 13px;
+      }
+
+      .detail-list {
+        display: grid;
+        gap: 8px;
+        color: #383838;
+        font-size: 13px;
+      }
+
+      .detail-list div {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .mini-icon {
+        width: 18px;
+        height: 18px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border: 1.7px solid #9a9a9d;
+        border-radius: 50%;
+        color: #8e8e93;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .code {
+        color: var(--orange-deep);
+        font-weight: 900;
+      }
+
+      .detail-btn {
+        display: block;
+        margin: 10px 0 0 auto;
+        height: 34px;
+        padding: 0 14px;
+        border: 1.2px solid var(--orange-deep);
+        border-radius: 18px;
+        color: var(--orange-deep);
+        background: #fff;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .coupon {
+        position: relative;
+        height: 120px;
+        margin-top: 14px;
+        overflow: hidden;
+        border-radius: 16px;
+        background:
+          radial-gradient(circle at 80% 17%, rgba(255, 255, 255, 0.87), transparent 9%),
+          radial-gradient(circle at 7% 88%, #61bf52 0 8%, transparent 9%),
+          linear-gradient(100deg, #ffe89d 0%, #ffd971 47%, #ffcf6b 100%);
+        box-shadow: var(--soft-shadow);
+      }
+
+      .coupon-copy {
+        position: relative;
+        z-index: 2;
+        padding: 18px 0 0 19px;
+      }
+
+      .coupon h2 {
+        margin: 0 0 8px;
+        color: #ff5e00;
+        font-size: 24px;
+        line-height: 1;
+        font-weight: 1000;
+      }
+
+      .coupon p {
+        margin: 0 0 11px;
+        color: #7a3a0e;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .claim {
+        height: 32px;
+        padding: 0 15px;
+        border: 0;
+        border-radius: 17px;
+        color: #fff;
+        background: linear-gradient(180deg, #ff9f15, #ff7900);
+        font-size: 15px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .student {
+        position: absolute;
+        right: 18px;
+        bottom: 0;
+        width: 112px;
+        height: 112px;
+      }
+
+      .student::before {
+        content: "";
+        position: absolute;
+        left: 38px;
+        top: 13px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 35% 42%, #2b1913 0 6%, transparent 7%),
+          radial-gradient(circle at 66% 42%, #2b1913 0 6%, transparent 7%),
+          radial-gradient(ellipse at 50% 72%, #e85c42 0 13%, transparent 14%),
+          #ffba8e;
+        box-shadow: 0 -11px 0 #4a2b1e;
+      }
+
+      .student::after {
+        content: "";
+        position: absolute;
+        left: 25px;
+        bottom: -8px;
+        width: 70px;
+        height: 61px;
+        border-radius: 32px 32px 0 0;
+        background:
+          linear-gradient(90deg, #315fa7 0 16px, transparent 16px calc(100% - 16px), #315fa7 calc(100% - 16px)) 0 0 / 100% 100% no-repeat,
+          linear-gradient(180deg, #ffcc35, #ff9f11);
+      }
+
+      .print-paper {
+        position: absolute;
+        right: 70px;
+        bottom: 27px;
+        z-index: 3;
+        width: 38px;
+        height: 49px;
+        border-radius: 3px;
+        background:
+          linear-gradient(#ff8a00 0 0) 11px 11px / 18px 3px no-repeat,
+          linear-gradient(#d8d8d8 0 0) 8px 23px / 24px 2px no-repeat,
+          linear-gradient(#d8d8d8 0 0) 8px 32px / 20px 2px no-repeat,
+          #fff;
+        transform: rotate(-8deg);
+      }
+
+      .dots {
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .dots i {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #e2e2e2;
+      }
+
+      .dots i.active {
+        background: var(--orange);
+      }
+
+      .simple-screen {
+        display: none;
+        padding: 46px 14px 0;
+      }
+
+      .simple-card {
+        padding: 20px;
+        border-radius: 18px;
+        background: var(--card);
+        box-shadow: var(--soft-shadow);
+      }
+
+      .simple-card h2 {
+        margin: 0 0 10px;
+        font-size: 23px;
+      }
+
+      .simple-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .list {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .list-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: var(--soft-shadow);
+      }
+
+      .list-thumb {
+        width: 46px;
+        height: 46px;
+        flex: 0 0 auto;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #fff2c8, #ff9400);
+      }
+
+      .list-item h3 {
+        margin: 0 0 5px;
+        font-size: 16px;
+      }
+
+      .list-item p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .tabbar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 78px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        align-items: start;
+        padding-top: 10px;
+        border-radius: 24px 24px 0 0;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 -12px 28px rgba(47, 34, 11, 0.08);
+      }
+
+      .tab {
+        display: grid;
+        place-items: center;
+        gap: 4px;
+        border: 0;
+        outline: 0;
+        color: #8d8d90;
+        background: transparent;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .tab svg {
+        width: 27px;
+        height: 27px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2.3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .tab.active {
+        color: var(--orange);
+      }
+
+      .tab:focus-visible {
+        outline: 2px solid rgba(255, 138, 0, 0.28);
+        outline-offset: -4px;
+      }
+
+      .tab.active .home-icon {
+        fill: var(--orange);
+        stroke: var(--orange);
+      }
+
+      .home-indicator {
+        position: absolute;
+        left: 50%;
+        bottom: 10px;
+        width: 136px;
+        height: 5px;
+        border-radius: 99px;
+        background: #050505;
+        transform: translateX(-50%);
+      }
+
+      .home-view[hidden],
+      .simple-screen[hidden] {
+        display: none;
+      }
+
+      .home-view {
+        display: block;
+      }
+
+      .simple-screen:not([hidden]) {
+        display: block;
+      }
+
+      @media (max-width: 420px) {
+        body {
+          display: block;
+          background: #fff;
+        }
+
+        .phone {
+          width: 390px;
+          max-width: 100vw;
+          margin: 0 auto;
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone">
+      <div class="page">
+        <div class="status-bar">
+          <div class="time">9:41</div>
+          <div class="system-icons" aria-hidden="true">
+            <div class="signal"><i></i><i></i><i></i><i></i></div>
+            <div class="wifi"><i></i></div>
+            <div class="battery"><i></i></div>
+          </div>
+        </div>
+
+        <section class="home-view" data-screen="home">
+          <header class="hero">
+            <div class="campus" aria-hidden="true">
+              <div class="building"><span></span><span></span><span></span></div>
+              <div class="plane"></div>
+            </div>
+            <div class="hero-copy">
+              <div class="avatar" aria-hidden="true"></div>
+              <div class="greeting">
+                <h1><span>你好，</span>欢迎使用自助打印</h1>
+                <p>便捷打印，助力你的校园生活</p>
+              </div>
+            </div>
+            <div class="printer-scene" aria-hidden="true">
+              <div class="paper-in"></div>
+              <div class="printer"></div>
+              <div class="paper-out"></div>
+              <div class="books"></div>
+              <div class="plant"></div>
+            </div>
+          </header>
+
+          <main class="main-content">
+            <div class="search-card">
+              <div class="search-icon" aria-hidden="true"></div>
+              <input aria-label="搜索" placeholder="搜索文件名 / 输入订单号" />
+              <div class="divider" aria-hidden="true"></div>
+              <button class="upload-btn" type="button">
+                <span class="cloud" aria-hidden="true"><i></i></span>
+                上传文件
+              </button>
+            </div>
+
+            <section class="quick-grid" aria-label="快捷功能">
+              <button class="quick-card" type="button">
+                <span class="icon-tile folder" aria-hidden="true"></span>
+                <span><h3>上传文件</h3><p>支持多种格式</p></span>
+                <span class="chev">›</span>
+              </button>
+              <button class="quick-card" type="button">
+                <span class="icon-tile qr" aria-hidden="true"></span>
+                <span><h3>扫码打印</h3><p>扫码快速打印</p></span>
+                <span class="chev">›</span>
+              </button>
+              <button class="quick-card" type="button">
+                <span class="icon-tile doc" aria-hidden="true"></span>
+                <span><h3>订单记录</h3><p>查看订单进度</p></span>
+                <span class="chev">›</span>
+              </button>
+              <button class="quick-card" type="button">
+                <span class="icon-tile map" aria-hidden="true"></span>
+                <span><h3>附近打印点</h3><p>查找附近设备</p></span>
+                <span class="chev">›</span>
+              </button>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2 class="panel-title">当前订单</h2>
+                <span class="status-pill"><span class="clock" aria-hidden="true"></span>待打印</span>
+              </div>
+              <div class="order">
+                <div class="file-preview"><div class="word-doc" aria-hidden="true"></div></div>
+                <div class="order-info">
+                  <h3>高等数学课后习题集.docx</h3>
+                  <p class="meta">A4｜黑白｜单面｜12页</p>
+                  <div class="detail-list">
+                    <div><span class="mini-icon">⌖</span><span>学生活动中心打印店</span></div>
+                    <div><span class="mini-icon">#</span><span>取件码　<b class="code">7A3B</b></span></div>
+                    <div><span class="mini-icon">◷</span><span>提交时间　2024-05-20&nbsp; 09:36</span></div>
+                  </div>
+                  <button class="detail-btn" type="button">查看详情</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="coupon">
+              <div class="coupon-copy">
+                <h2>新用户首单立减 ¥5</h2>
+                <p>校园打印更划算</p>
+                <button class="claim" type="button">立即领取 ›</button>
+              </div>
+              <div class="student" aria-hidden="true"></div>
+              <div class="print-paper" aria-hidden="true"></div>
+            </section>
+            <div class="dots" aria-hidden="true"><i class="active"></i><i></i><i></i><i></i></div>
+          </main>
+        </section>
+
+        <section class="simple-screen" data-screen="files" hidden></section>
+        <section class="simple-screen" data-screen="orders" hidden></section>
+        <section class="simple-screen" data-screen="mine" hidden></section>
+      </div>
+
+      <nav class="tabbar" aria-label="底部导航">
+        <button class="tab active" type="button" data-tab="home">
+          <svg class="home-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5v7a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/><path d="M9 18h6"/></svg>
+          <span>首页</span>
+        </button>
+        <button class="tab" type="button" data-tab="files">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h6l2 2h10v10.2a1.8 1.8 0 0 1-1.8 1.8H4.8A1.8 1.8 0 0 1 3 18.7z"/><path d="M3 10h18"/></svg>
+          <span>文件</span>
+        </button>
+        <button class="tab" type="button" data-tab="orders">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1z"/><path d="M14.5 3.5V7h3.5"/><path d="M8.5 11h7"/><path d="M8.5 15h5"/></svg>
+          <span>订单</span>
+        </button>
+        <button class="tab" type="button" data-tab="mine">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12.3a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2z"/><path d="M4.5 20.2c1.2-3.6 3.7-5.4 7.5-5.4s6.3 1.8 7.5 5.4"/></svg>
+          <span>我的</span>
+        </button>
+      </nav>
+      <div class="home-indicator" aria-hidden="true"></div>
+    </div>
+
+    <script>
+      const screens = {
+        files: {
+          title: "我的文件",
+          intro: "展示最近上传和待打印文件，方便快速选择继续下单。",
+          items: [
+            ["高等数学课后习题集.docx", "A4｜12页｜2024-05-20"],
+            ["英语阅读材料.pdf", "彩色｜双面｜2024-05-18"],
+            ["实验报告模板.docx", "黑白｜单面｜2024-05-12"]
+          ]
+        },
+        orders: {
+          title: "订单记录",
+          intro: "静态订单列表，保留待打印、已完成和已取消等常见状态。",
+          items: [
+            ["7A3B　待打印", "学生活动中心打印店｜¥3.60"],
+            ["9K21　已完成", "图书馆一楼打印点｜¥5.20"],
+            ["C805　已取消", "教学楼 B 座自助机｜¥0.00"]
+          ]
+        },
+        mine: {
+          title: "个人中心",
+          intro: "账户、优惠券、常用打印点和帮助入口集中在这里。",
+          items: [
+            ["校园卡余额", "¥28.50"],
+            ["优惠券", "2 张可用"],
+            ["常用打印点", "学生活动中心打印店"]
+          ]
+        }
+      };
+
+      const tabs = document.querySelectorAll(".tab");
+      const home = document.querySelector('[data-screen="home"]');
+
+      function renderScreen(name) {
+        const data = screens[name];
+        const screen = document.querySelector(`[data-screen="${name}"]`);
+        screen.innerHTML = `
+          <div class="simple-card">
+            <h2>${data.title}</h2>
+            <p>${data.intro}</p>
+          </div>
+          <div class="list">
+            ${data.items.map(item => `
+              <div class="list-item">
+                <div class="list-thumb" aria-hidden="true"></div>
+                <div>
+                  <h3>${item[0]}</h3>
+                  <p>${item[1]}</p>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      Object.keys(screens).forEach(renderScreen);
+
+      tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.tab;
+          tabs.forEach(item => item.classList.toggle("active", item === tab));
+          home.hidden = target !== "home";
+          document.querySelectorAll(".simple-screen").forEach(screen => {
+            screen.hidden = screen.dataset.screen !== target;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
