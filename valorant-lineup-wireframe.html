@@ -2124,10 +2124,12 @@
       }
 
       .device.screen-detail .content {
+        padding-top: 0;
         background: #f5f6f8;
       }
 
       .device.screen-detail .detail-head {
+        padding-top: 16px;
         margin-bottom: 14px;
       }
 
@@ -2184,12 +2186,24 @@
       .device.screen-detail .step-tabs {
         position: sticky;
         top: 0;
-        z-index: 5;
+        z-index: 20;
         gap: 10px;
-        margin: 0 -16px 14px;
-        padding: 8px 16px;
-        background: rgba(245, 246, 248, 0.96);
+        margin: 0 -16px 12px;
+        padding: 10px 16px 11px;
+        border-bottom: 1px solid #eef0f3;
+        background: #f5f6f8;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
         scrollbar-width: none;
+      }
+
+      .device.screen-detail .step-tabs::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -18px;
+        height: 18px;
+        background: #f5f6f8;
       }
 
       .device.screen-detail .step-tab {
@@ -2218,6 +2232,10 @@
       .detail-stack {
         display: grid;
         gap: 12px;
+      }
+
+      .device.screen-detail .detail-card {
+        scroll-margin-top: 62px;
       }
 
       .detail-card {
@@ -2507,35 +2525,35 @@
             </header>
 
             <nav class="step-tabs" aria-label="步骤导航">
-              <button class="step-tab is-active" type="button">1 火落点</button>
-              <button class="step-tab" type="button">2 参照物</button>
-              <button class="step-tab" type="button">3 瞄准点</button>
-              <button class="step-tab" type="button">4 站位</button>
-              <button class="step-tab" type="button">5 说明</button>
+              <button class="step-tab is-active" type="button" data-step="0">1 火落点</button>
+              <button class="step-tab" type="button" data-step="1">2 参照物</button>
+              <button class="step-tab" type="button" data-step="2">3 瞄准点</button>
+              <button class="step-tab" type="button" data-step="3">4 站位</button>
+              <button class="step-tab" type="button" data-step="4">5 说明</button>
             </nav>
 
             <div class="detail-stack">
-              <article class="detail-card">
+              <article class="detail-card" data-step-card="0">
                 <h2>1. 火落点</h2>
                 <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/landing.png" alt="火落点图" /></div>
                 <p>此为燃烧弹落地点位，确保覆盖目标区域。</p>
               </article>
-              <article class="detail-card">
+              <article class="detail-card" data-step-card="1">
                 <h2>2. 参照物 / 粘点</h2>
                 <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/reference.jpeg" alt="参照物粘点图" /></div>
                 <p>以此参照物为基准，对齐生成的瞄准点。</p>
               </article>
-              <article class="detail-card">
+              <article class="detail-card" data-step-card="2">
                 <h2>3. 瞄准点</h2>
                 <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/aim.jpeg" alt="瞄准点图" /></div>
                 <p>将准星对准此位置，确保投掷角度一致。</p>
               </article>
-              <article class="detail-card">
+              <article class="detail-card" data-step-card="3">
                 <h2>4. 站位点</h2>
                 <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/stand.jpeg" alt="站位点图" /></div>
                 <p>站在此位置进行投掷，视角朝向如图所示。</p>
               </article>
-              <article class="detail-card instructions">
+              <article class="detail-card instructions" data-step-card="4">
                 <h2>5. 操作说明</h2>
                 <ol>
                   <li>移动到“站位点”位置，面向推荐方向。</li>
@@ -2674,6 +2692,7 @@
       const historyStack = ["home"];
       let current = "home";
       let selectedMap = "pearl";
+      let activeStepIndex = 0;
       let toastTimer;
 
       const mapCatalog = [
@@ -2783,6 +2802,32 @@
         showToast("点位已提交，等待审核");
       }
 
+      function setActiveStep(index) {
+        const nextIndex = Number(index);
+        if (activeStepIndex === nextIndex) return;
+        activeStepIndex = nextIndex;
+        document.querySelectorAll(".step-tab").forEach((tab) => {
+          tab.classList.toggle("is-active", tab.dataset.step === String(nextIndex));
+        });
+        const activeTab = document.querySelector(`.step-tab[data-step="${nextIndex}"]`);
+        activeTab?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }
+
+      function syncActiveStep() {
+        if (current !== "detail") return;
+        const content = document.querySelector(".content");
+        const cards = Array.from(document.querySelectorAll("[data-step-card]"));
+        const contentTop = content.getBoundingClientRect().top;
+        let activeIndex = 0;
+
+        cards.forEach((card, index) => {
+          const top = card.getBoundingClientRect().top - contentTop;
+          if (top <= 88) activeIndex = index;
+        });
+
+        setActiveStep(activeIndex);
+      }
+
       function showScreen(id, push = true) {
         if (!meta[id]) return;
         screens.forEach((screen) => screen.classList.toggle("is-active", screen.id === id));
@@ -2802,6 +2847,10 @@
         device.classList.toggle("screen-filter", current === "filter");
         device.classList.toggle("screen-detail", current === "detail");
         document.querySelector(".content").scrollTop = 0;
+        if (current === "detail") {
+          activeStepIndex = -1;
+          setActiveStep(0);
+        }
       }
 
       function goBack() {
@@ -2828,9 +2877,22 @@
         });
       });
 
+      document.querySelectorAll(".step-tab").forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = document.querySelector(`[data-step-card="${button.dataset.step}"]`);
+          if (!target) return;
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          setActiveStep(button.dataset.step);
+        });
+      });
+
       mapSearch.addEventListener("input", () => {
         renderMapList(mapSearch.value);
         bindMapCards();
+      });
+
+      document.querySelector(".content").addEventListener("scroll", () => {
+        window.requestAnimationFrame(syncActiveStep);
       });
 
       uploadName.addEventListener("input", () => {
