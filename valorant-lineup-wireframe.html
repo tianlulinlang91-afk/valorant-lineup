@@ -2464,105 +2464,48 @@
               <div class="filter-chip-row">
                 <span class="filter-chip-label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4 3 7 7 9 4-2 7-5 7-9V6l-7-3Z"/></svg>阵营</span>
                 <span class="filter-chip-options">
-                  <button class="filter-chip is-active" type="button">全部</button>
-                  <button class="filter-chip" type="button">攻方</button>
-                  <button class="filter-chip" type="button">守方</button>
+                  <button class="filter-chip is-active" type="button" data-filter-group="side" data-filter-value="全部">全部</button>
+                  <button class="filter-chip" type="button" data-filter-group="side" data-filter-value="攻方">攻方</button>
+                  <button class="filter-chip" type="button" data-filter-group="side" data-filter-value="防守方">防守方</button>
                 </span>
               </div>
               <div class="filter-chip-row">
                 <span class="filter-chip-label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M2 12h4"/><path d="M18 12h4"/></svg>包点</span>
                 <span class="filter-chip-options">
-                  <button class="filter-chip is-active" type="button">全部</button>
-                  <button class="filter-chip" type="button">A点</button>
-                  <button class="filter-chip" type="button">B点</button>
-                  <button class="filter-chip" type="button">C点</button>
-                  <button class="filter-chip" type="button">其它</button>
+                  <button class="filter-chip is-active" type="button" data-filter-group="site" data-filter-value="全部">全部</button>
+                  <button class="filter-chip" type="button" data-filter-group="site" data-filter-value="A点">A点</button>
+                  <button class="filter-chip" type="button" data-filter-group="site" data-filter-value="B点">B点</button>
+                  <button class="filter-chip" type="button" data-filter-group="site" data-filter-value="C点">C点</button>
+                  <button class="filter-chip" type="button" data-filter-group="site" data-filter-value="其它">其它</button>
                 </span>
               </div>
               <div class="filter-chip-row">
                 <span class="filter-chip-label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c4 0 7-3 7-7 0-3-2-5-4-7 .2 2-1 3-2 4 0-4-3-6-5-8 0 4-3 6-3 11 0 4 3 7 7 7Z"/></svg>类型</span>
                 <span class="filter-chip-options">
-                  <button class="filter-chip is-active" type="button">全部</button>
-                  <button class="filter-chip" type="button">防拆火</button>
-                  <button class="filter-chip" type="button">其它</button>
+                  <button class="filter-chip is-active" type="button" data-filter-group="type" data-filter-value="全部">全部</button>
+                  <button class="filter-chip" type="button" data-filter-group="type" data-filter-value="防拆火">防拆火</button>
+                  <button class="filter-chip" type="button" data-filter-group="type" data-filter-value="防守火">防守火</button>
+                  <button class="filter-chip" type="button" data-filter-group="type" data-filter-value="其它">其它</button>
                 </span>
               </div>
             </section>
 
-            <h2 class="result-title">查询结果 <em>2</em> 个</h2>
-            <div class="lineup-list">
-              <button class="result-card tap" type="button" data-next="detail">
-                <span class="result-thumb"><img src="public/assets/valorant-lineups/pearl/pearl-official.png" alt="A点默认包防拆火缩略图" /></span>
-                <span>
-                  <strong>A点默认包 · 防拆火</strong>
-                  <span class="badge-row"><span class="badge blue">攻方</span><span class="badge purple">A点</span><span class="badge orange">防拆火</span></span>
-                  <span class="result-meta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>5 步教学 · 含图示说明</span>
-                  <p>查看落点、参照物、瞄准点与站位步骤</p>
-                </span>
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
-              </button>
-              <button class="result-card tap" type="button" data-next="detail">
-                <span class="result-thumb"><img src="public/assets/valorant-lineups/pearl/pearl-official.png" alt="B点默认包防拆火缩略图" /></span>
-                <span>
-                  <strong>B点默认包 · 防拆火</strong>
-                  <span class="badge-row"><span class="badge blue">攻方</span><span class="badge purple">B点</span><span class="badge orange">防拆火</span></span>
-                  <span class="result-meta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>5 步教学 · 含图示说明</span>
-                  <p>查看落点、参照物、瞄准点与站位步骤</p>
-                </span>
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
-              </button>
-            </div>
+            <h2 class="result-title">查询结果 <em id="lineupCount">0</em> 个</h2>
+            <div class="lineup-list" id="lineupList"></div>
           </section>
 
           <section class="screen" id="detail">
             <header class="detail-head">
-              <div class="badge-row">
+              <div class="badge-row" id="detailBadges">
                 <span class="badge">深海明珠</span><span class="badge blue">攻方</span><span class="badge purple">A点</span><span class="badge orange">防拆火</span>
               </div>
-              <h1>A点默认包 · 防拆火</h1>
-              <div class="detail-meta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>5 步教学 · 含图示说明 · 推荐按顺序查看</div>
-              <p>先看火落点，再看参照物、瞄准点和站位。</p>
+              <h1 id="detailTitle">A点默认包 · 防拆火</h1>
+              <div class="detail-meta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg><span id="detailMeta">5 步教学 · 含图示说明 · 推荐按顺序查看</span></div>
+              <p id="detailIntro">先看火落点，再看参照物、瞄准点和站位。</p>
             </header>
 
-            <nav class="step-tabs" aria-label="步骤导航">
-              <button class="step-tab is-active" type="button" data-step="0">1 火落点</button>
-              <button class="step-tab" type="button" data-step="1">2 参照物</button>
-              <button class="step-tab" type="button" data-step="2">3 瞄准点</button>
-              <button class="step-tab" type="button" data-step="3">4 站位</button>
-              <button class="step-tab" type="button" data-step="4">5 说明</button>
-            </nav>
-
-            <div class="detail-stack">
-              <article class="detail-card" data-step-card="0">
-                <h2>1. 火落点</h2>
-                <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/landing.png" alt="火落点图" /></div>
-                <p>此为燃烧弹落地点位，确保覆盖目标区域。</p>
-              </article>
-              <article class="detail-card" data-step-card="1">
-                <h2>2. 参照物 / 粘点</h2>
-                <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/reference.jpeg" alt="参照物粘点图" /></div>
-                <p>以此参照物为基准，对齐生成的瞄准点。</p>
-              </article>
-              <article class="detail-card" data-step-card="2">
-                <h2>3. 瞄准点</h2>
-                <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/aim.jpeg" alt="瞄准点图" /></div>
-                <p>将准星对准此位置，确保投掷角度一致。</p>
-              </article>
-              <article class="detail-card" data-step-card="3">
-                <h2>4. 站位点</h2>
-                <div class="image-frame"><img src="public/assets/valorant-lineups/pearl/attack/a-default/stand.jpeg" alt="站位点图" /></div>
-                <p>站在此位置进行投掷，视角朝向如图所示。</p>
-              </article>
-              <article class="detail-card instructions" data-step-card="4">
-                <h2>5. 操作说明</h2>
-                <ol>
-                  <li>移动到“站位点”位置，面向推荐方向。</li>
-                  <li>将准星对准“瞄准点”，保证位置和角度一致。</li>
-                  <li>轻投或跳投燃烧弹，确保轨迹与示意一致。</li>
-                  <li>投掷后火焰覆盖目标区域，延迟封锁拆包区域。</li>
-                </ol>
-              </article>
-            </div>
+            <nav class="step-tabs" id="stepTabs" aria-label="步骤导航"></nav>
+            <div class="detail-stack" id="detailStack"></div>
           </section>
 
           <section class="screen" id="upload">
@@ -2685,6 +2628,14 @@
       const homeMapGrid = document.querySelector("#homeMapGrid");
       const mapList = document.querySelector("#mapList");
       const mapSearch = document.querySelector(".search input");
+      const lineupCount = document.querySelector("#lineupCount");
+      const lineupList = document.querySelector("#lineupList");
+      const detailBadges = document.querySelector("#detailBadges");
+      const detailTitle = document.querySelector("#detailTitle");
+      const detailMeta = document.querySelector("#detailMeta");
+      const detailIntro = document.querySelector("#detailIntro");
+      const stepTabs = document.querySelector("#stepTabs");
+      const detailStack = document.querySelector("#detailStack");
       const emptyTitle = document.querySelector("#emptyTitle");
       const emptyCopy = document.querySelector("#emptyCopy");
       const uploadName = document.querySelector("#uploadName");
@@ -2692,6 +2643,12 @@
       const historyStack = ["home"];
       let current = "home";
       let selectedMap = "pearl";
+      let selectedLineup = "a-default-long";
+      const activeFilters = {
+        side: "全部",
+        site: "全部",
+        type: "全部"
+      };
       let activeStepIndex = 0;
       let toastTimer;
 
@@ -2701,8 +2658,8 @@
           name: "深海明珠",
           code: "PEARL",
           image: "public/assets/valorant-lineups/pearl/pearl-official.png",
-          meta: "攻方 · A点 · 防拆火",
-          count: "已整理 1 个点位",
+          meta: "攻守方 · A点 · 防拆火",
+          count: "已整理 3 个点位",
           hasLineup: true
         },
         { slug: "sunset", name: "日落之城", code: "SUNSET", image: "public/assets/valorant-lineups/maps/sunset.avif" },
@@ -2715,6 +2672,60 @@
         { slug: "breeze", name: "微风岛屿", code: "BREEZE", image: "public/assets/valorant-lineups/maps/breeze.avif" },
         { slug: "lotus", name: "莲华古城", code: "LOTUS", image: "public/assets/valorant-lineups/maps/lotus.avif" },
         { slug: "fracture", name: "裂变峡谷", code: "FRACTURE", image: "public/assets/valorant-lineups/maps/fracture.webp" }
+      ];
+
+      const lineupCatalog = [
+        {
+          slug: "a-default-long",
+          title: "A默认包 - 远点",
+          subtitle: "进攻方 · A包点 · 防拆火",
+          map: "深海明珠",
+          side: "攻方",
+          site: "A点",
+          type: "防拆火",
+          thumbnail: "public/assets/valorant-lineups/pearl/doc-points/image1.png",
+          intro: "从远点完成 A 默认包防拆火，先确认落点，再按站位和瞄点投掷。",
+          steps: [
+            { label: "火落点", title: "火落点", image: "public/assets/valorant-lineups/pearl/doc-points/image1.png", copy: "燃烧弹覆盖 A 默认包附近，封锁拆包区域。" },
+            { label: "站位", title: "站位", image: "public/assets/valorant-lineups/pearl/doc-points/image2.png", copy: "站在 A 区主门外的远点位置，以墙面标记为参照。" },
+            { label: "瞄点", title: "瞄点", image: "public/assets/valorant-lineups/pearl/doc-points/image3.png", copy: "准星对齐图中建筑边缘与标记位置后投掷。" }
+          ]
+        },
+        {
+          slug: "a-default-short",
+          title: "A默认包 - 小道",
+          subtitle: "进攻方 · A包点 · 防拆火",
+          map: "深海明珠",
+          side: "攻方",
+          site: "A点",
+          type: "防拆火",
+          thumbnail: "public/assets/valorant-lineups/pearl/doc-points/image1.png",
+          intro: "从小道位置补 A 默认包防拆火，适合进攻后控图或残局拖延。",
+          steps: [
+            { label: "火落点", title: "火落点", image: "public/assets/valorant-lineups/pearl/doc-points/image1.png", copy: "燃烧弹落在 A 默认包周围，覆盖拆包路径。" },
+            { label: "站位", title: "站位", image: "public/assets/valorant-lineups/pearl/doc-points/image4.png", copy: "站在小道入口附近，对齐图中墙角和过道方向。" },
+            { label: "瞄点", title: "瞄点", image: "public/assets/valorant-lineups/pearl/doc-points/image5.png", copy: "准星贴住屋檐边线与箭头指示点后投掷。" }
+          ]
+        },
+        {
+          slug: "a-default-ct",
+          title: "A默认包 - CT（附防守火）",
+          subtitle: "防守方 · A包点 · CT",
+          map: "深海明珠",
+          side: "防守方",
+          site: "A点",
+          type: "防守火",
+          thumbnail: "public/assets/valorant-lineups/pearl/doc-points/image7.png",
+          intro: "从 CT 一侧处理 A 默认包，同时保留防守火瞄点，适合回防和守包。",
+          steps: [
+            { label: "防守火", title: "防守火落点", image: "public/assets/valorant-lineups/pearl/doc-points/image6.png", copy: "防守火覆盖 CT 入口附近，阻断对手推进或回撤路线。" },
+            { label: "包点火", title: "包点火落点", image: "public/assets/valorant-lineups/pearl/doc-points/image7.png", copy: "包点火覆盖 A 默认包周围，延迟拆包。" },
+            { label: "站位", title: "站位", image: "public/assets/valorant-lineups/pearl/doc-points/image8.png", copy: "站在守方排水沟附近，对齐水池边和墙体参照。" },
+            { label: "参照物", title: "参照物", image: "public/assets/valorant-lineups/pearl/doc-points/image9.png", copy: "观察顶部横梁与树叶位置，确认瞄准参考区域。" },
+            { label: "防守瞄点", title: "防守火瞄点", image: "public/assets/valorant-lineups/pearl/doc-points/image10.png", copy: "准星对齐防守火标注点，可封锁 CT 侧通道。" },
+            { label: "包点瞄点", title: "包点火瞄点", image: "public/assets/valorant-lineups/pearl/doc-points/image11.png", copy: "准星对齐包点火标注点，投掷后覆盖 A 默认包。" }
+          ]
+        }
       ];
 
       const meta = {
@@ -2760,6 +2771,82 @@
 
       function getSelectedMap() {
         return mapCatalog.find((map) => map.slug === selectedMap) || mapCatalog[0];
+      }
+
+      function getSelectedLineup() {
+        return lineupCatalog.find((lineup) => lineup.slug === selectedLineup) || lineupCatalog[0];
+      }
+
+      function getFilteredLineups() {
+        return lineupCatalog.filter((lineup) => {
+          const sideMatch = activeFilters.side === "全部" || lineup.side === activeFilters.side;
+          const siteMatch = activeFilters.site === "全部" || lineup.site === activeFilters.site || (activeFilters.site === "其它" && !["A点", "B点", "C点"].includes(lineup.site));
+          const typeMatch = activeFilters.type === "全部" || lineup.type === activeFilters.type || (activeFilters.type === "其它" && !["防拆火", "防守火"].includes(lineup.type));
+          return sideMatch && siteMatch && typeMatch;
+        });
+      }
+
+      function renderLineupList() {
+        const visibleLineups = getFilteredLineups();
+        lineupCount.textContent = visibleLineups.length;
+        if (!visibleLineups.length) {
+          lineupList.innerHTML = `
+            <div class="empty-state">
+              <h1>暂无匹配点位</h1>
+              <p>当前筛选条件下还没有整理好的点位。</p>
+            </div>
+          `;
+          return;
+        }
+        lineupList.innerHTML = visibleLineups.map((lineup) => `
+          <button class="result-card tap" type="button" data-lineup="${lineup.slug}">
+            <span class="result-thumb"><img src="${lineup.thumbnail}" alt="${lineup.title}缩略图" /></span>
+            <span>
+              <strong>${lineup.title}</strong>
+              <span class="badge-row"><span class="badge blue">${lineup.side}</span><span class="badge purple">${lineup.site}</span><span class="badge orange">${lineup.type}</span></span>
+              <span class="result-meta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>${lineup.steps.length} 步教学 · 含图示说明</span>
+              <p>${lineup.intro}</p>
+            </span>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+        `).join("");
+
+        document.querySelectorAll("[data-lineup]").forEach((button) => {
+          button.addEventListener("click", () => {
+            selectedLineup = button.dataset.lineup;
+            showScreen("detail");
+          });
+        });
+        bindMapCards();
+      }
+
+      function renderLineupDetail() {
+        const lineup = getSelectedLineup();
+        detailBadges.innerHTML = `<span class="badge">${lineup.map}</span><span class="badge blue">${lineup.side}</span><span class="badge purple">${lineup.site}</span><span class="badge orange">${lineup.type}</span>`;
+        detailTitle.textContent = lineup.title;
+        detailMeta.textContent = `${lineup.steps.length} 步教学 · 含图示说明 · 推荐按顺序查看`;
+        detailIntro.textContent = lineup.intro;
+        stepTabs.innerHTML = lineup.steps.map((step, index) => `
+          <button class="step-tab${index === 0 ? " is-active" : ""}" type="button" data-step="${index}">${index + 1} ${step.label}</button>
+        `).join("");
+        detailStack.innerHTML = lineup.steps.map((step, index) => {
+          if (step.items) {
+            return `
+              <article class="detail-card instructions" data-step-card="${index}">
+                <h2>${index + 1}. ${step.title}</h2>
+                <ol>${step.items.map((item) => `<li>${item}</li>`).join("")}</ol>
+              </article>
+            `;
+          }
+          return `
+            <article class="detail-card" data-step-card="${index}">
+              <h2>${index + 1}. ${step.title}</h2>
+              <div class="image-frame"><img src="${step.image}" alt="${step.title}图" /></div>
+              <p>${step.copy}</p>
+            </article>
+          `;
+        }).join("");
+        bindStepTabs();
       }
 
       function selectMap(slug) {
@@ -2810,7 +2897,33 @@
           tab.classList.toggle("is-active", tab.dataset.step === String(nextIndex));
         });
         const activeTab = document.querySelector(`.step-tab[data-step="${nextIndex}"]`);
-        activeTab?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        const tabList = activeTab?.closest(".step-tabs");
+        if (activeTab && tabList) {
+          const targetLeft = activeTab.offsetLeft - (tabList.clientWidth - activeTab.offsetWidth) / 2;
+          tabList.scrollTo({ left: Math.max(0, targetLeft), behavior: "smooth" });
+        }
+      }
+
+      function scrollStepCardIntoView(target) {
+        const content = document.querySelector(".content");
+        if (!content || !target) return;
+        const contentTop = content.getBoundingClientRect().top;
+        const targetTop = target.getBoundingClientRect().top - contentTop + content.scrollTop;
+        content.scrollTo({
+          top: Math.max(0, targetTop - 62),
+          behavior: "smooth"
+        });
+      }
+
+      function bindStepTabs() {
+        document.querySelectorAll(".step-tab").forEach((button) => {
+          button.addEventListener("click", () => {
+            const target = document.querySelector(`[data-step-card="${button.dataset.step}"]`);
+            if (!target) return;
+            scrollStepCardIntoView(target);
+            setActiveStep(button.dataset.step);
+          });
+        });
       }
 
       function syncActiveStep() {
@@ -2841,6 +2954,15 @@
           pageSubtitle.textContent = map.name;
           emptyTitle.textContent = `${map.name}暂无点位`;
           emptyCopy.textContent = `${map.name}暂未录入炼狱燃烧弹点位。补充数据后，这里会替换为点位卡片。`;
+        }
+        if (id === "filter") {
+          renderLineupList();
+        }
+        if (id === "detail") {
+          renderLineupDetail();
+          const lineup = getSelectedLineup();
+          pageTitle.textContent = lineup.title;
+          pageSubtitle.textContent = lineup.subtitle;
         }
         backBtn.style.visibility = current === "home" ? "hidden" : "visible";
         device.classList.toggle("screen-home", current === "home");
@@ -2874,15 +2996,8 @@
         button.addEventListener("click", () => {
           button.parentElement.querySelectorAll(".filter-chip").forEach((chip) => chip.classList.remove("is-active"));
           button.classList.add("is-active");
-        });
-      });
-
-      document.querySelectorAll(".step-tab").forEach((button) => {
-        button.addEventListener("click", () => {
-          const target = document.querySelector(`[data-step-card="${button.dataset.step}"]`);
-          if (!target) return;
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
-          setActiveStep(button.dataset.step);
+          activeFilters[button.dataset.filterGroup] = button.dataset.filterValue;
+          renderLineupList();
         });
       });
 
@@ -2903,6 +3018,14 @@
         if (current === "upload") {
           submitUpload();
           return;
+        }
+        if (current === "filter") {
+          const visibleLineups = getFilteredLineups();
+          if (!visibleLineups.length) {
+            showToast("当前筛选暂无点位");
+            return;
+          }
+          selectedLineup = visibleLineups[0].slug;
         }
         showScreen(meta[current][3]);
       });
